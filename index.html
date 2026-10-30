@@ -2,21 +2,539 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fernando's 40s</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<script>
-  // Lleva a cada invitado a su invitación, conservando su código personal (#...)
-  location.replace('https://claude.ai/artifact/CjoWWR3kjyWewJEhaJq1VT' + location.hash);
-</script>
+<meta property="og:title" content="Fernando’s 40s">
+<meta property="og:description" content="Tu invitación personal · Mayo 2027">
+<style>[hidden]{display:none!important}</style>
+<title>Fernando’s 40s</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#F1F3F6;color:#1B2130;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;text-align:center;padding:16px}
-  b{display:block;font-size:64px;line-height:1;letter-spacing:-.04em}
-  b span:first-child{color:#13809F}b span:last-child{color:#23875C}
-  p{color:#5D6575}
+/* Layout: one narrow invitation column (two chapters: Florida cyan-blue, Cologne green); the owner's guest manager reuses the tokens as a working list. */
+:root{
+  --ground:#F1F3F6; --card:#FFFFFF; --ink:#1B2130; --muted:#5D6575; --line:#D8DCE3;
+  --sun:#13809F; --sun-ink:#FFFFFF; --sun-soft:#DCEFF5;
+  --rhine:#23875C; --rhine-ink:#FFFFFF; --rhine-soft:#DDF1E7;
+  --gift:#7A4BD0; --gift-soft:#EEE7FB;
+  --ok:#2E7D4F; --warn:#B7791F; --bad:#B4413A;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#11141B; --card:#191E27; --ink:#E8EBF1; --muted:#9AA2B1; --line:#2B313C;
+  --sun:#4FC3E0; --sun-ink:#0A1A20; --sun-soft:#12303A;
+  --rhine:#5CCB97; --rhine-ink:#0A1A12; --rhine-soft:#143021;
+  --gift:#B79BF2; --gift-soft:#2A2140;
+  --ok:#6DBE92; --warn:#E3B05A; --bad:#EF7E76; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#11141B; --card:#191E27; --ink:#E8EBF1; --muted:#9AA2B1; --line:#2B313C;
+  --sun:#4FC3E0; --sun-ink:#0A1A20; --sun-soft:#12303A;
+  --rhine:#5CCB97; --rhine-ink:#0A1A12; --rhine-soft:#143021;
+  --gift:#B79BF2; --gift-soft:#2A2140;
+  --ok:#6DBE92; --warn:#E3B05A; --bad:#EF7E76; color-scheme:dark}
+
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
+
+/* ---------- Invitation ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--ground)}
+.inv{max-width:660px;margin:0 auto;padding-block:28px 72px;display:flex;flex-direction:column;gap:26px}
+.hero{position:relative;padding-top:18px}
+.confetti{position:absolute;inset:0 -8px auto -8px;height:250px;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;display:block;border-radius:2px;opacity:.75}
+.forty{position:relative;font-family:var(--display);font-weight:800;font-size:clamp(150px,42vw,250px);line-height:.8;letter-spacing:-.06em;display:flex;margin-left:-.04em}
+.forty span:nth-child(1){color:var(--c1)}.forty span:nth-child(2){color:var(--c2)}
+.forty span.suf{font-size:.36em;color:var(--ink);letter-spacing:0;align-self:flex-end;margin-left:.06em;line-height:1}
+.owner-name{position:relative;font-family:var(--display);font-weight:800;font-size:clamp(34px,9vw,56px);letter-spacing:-.02em;line-height:1;margin:0 0 6px}
+.kicker{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hello{position:relative}
+.hello h1{font-size:clamp(30px,7vw,42px);font-weight:600}
+.hello p{margin:12px 0 0;font-size:18px;max-width:34em}
+.msg{margin:16px 0 0;padding-left:14px;border-left:2px solid var(--line);font-style:italic;color:var(--muted)}
+.collage{display:flex;justify-content:center;gap:0;padding:8px 0 4px}
+.polaroid{background:var(--card);padding:8px 8px 30px;border-radius:4px;box-shadow:0 6px 18px rgba(20,30,50,.16);width:min(42%,210px);position:relative;margin:0 -10px}
+.polaroid img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:2px;max-width:100%}
+.polaroid figcaption{position:absolute;left:0;right:0;bottom:7px;text-align:center;font-size:13px;color:var(--muted);font-family:var(--display)}
+.polaroid:nth-child(1){transform:rotate(-5deg)}.polaroid:nth-child(2){transform:rotate(3deg) translateY(10px);z-index:1}.polaroid:nth-child(3){transform:rotate(-2deg)}
+.gallery{display:flex;flex-direction:column;gap:6px}
+.gallery h2{font-size:26px;font-weight:800;letter-spacing:-.01em}
+.gallery>p{margin:0;color:var(--muted)}
+.strip{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 8px 22px;margin-inline:-8px;-webkit-overflow-scrolling:touch}
+.strip .polaroid:nth-child(n){flex:0 0 auto;width:auto;margin:0;transform:rotate(var(--r,0deg));scroll-snap-align:center}
+.strip .polaroid img{height:min(52vw,220px);width:auto;max-width:none;aspect-ratio:auto}
+@media (prefers-reduced-motion:no-preference){.collage.fade .polaroid{animation:heroIn .45s ease both}.collage.fade .polaroid:nth-child(2){animation-delay:.06s}.collage.fade .polaroid:nth-child(3){animation-delay:.12s}}
+@keyframes heroIn{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
+.polaroid.solo{margin:0;width:min(70%,280px);transform:rotate(-2deg)}
+.tabs{position:sticky;top:env(safe-area-inset-top, 0px);z-index:4;background:var(--ground);display:flex;gap:6px;overflow-x:auto;padding:10px 0;margin-block:-10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink)}
+.tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+.tabs button.gifttab{border-color:var(--gift);color:var(--gift)}
+.tabs button.gifttab[aria-selected="true"]{background:var(--gift);color:var(--card)}
+.panel-inv{display:flex;flex-direction:column;gap:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.tile{all:unset;box-sizing:border-box;cursor:pointer;border-radius:16px;padding:18px;background:var(--ec);color:var(--eink);display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden;min-height:132px}
+.tile:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tile b{font-family:var(--display);font-size:26px;line-height:1.05}
+.tile small{opacity:.9;font-size:14px}
+.tile .go{margin-top:auto;font-weight:600;font-size:14px}
+.tile svg,.event-head svg{position:absolute;right:-6px;bottom:-6px;width:110px;height:auto;opacity:.22;color:currentColor}
+.event{background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.event-head{position:relative;overflow:hidden;padding:22px 22px 20px;background:var(--ec);color:var(--eink);display:flex;flex-direction:column;gap:6px}
+.event-head .kicker{color:inherit;opacity:.85}
+.event-head h2{position:relative;font-size:clamp(28px,6.5vw,38px);font-weight:800;letter-spacing:-.02em}
+.event-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px}
+.event-body p{margin:0;max-width:36em}
+.facts{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.facts li{background:var(--es);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:500}
+.tbc{font-size:14px;color:var(--muted)}
+.notinc{font-weight:500}
+.note{background:var(--es);border-radius:12px;padding:12px 14px;font-size:15px}
+.dress{display:flex;flex-direction:column;gap:2px;background:var(--es);border-radius:14px;padding:14px 16px}
+.dress b{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ec)}
+.dress i{display:flex;gap:6px;margin-top:8px}
+.dress em{width:22px;height:22px;border-radius:50%;display:block;border:2px solid var(--card)}
+.hint{all:unset;cursor:pointer;align-self:flex-start;background:var(--gift-soft);color:var(--gift);border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px}
+.hint:focus-visible{outline:2px solid var(--gift)}
+.fl{--ec:var(--sun);--eink:var(--sun-ink);--es:var(--sun-soft)}
+.eu{--ec:var(--rhine);--eink:var(--rhine-ink);--es:var(--rhine-soft)}
+.gift{--ec:var(--gift)}
+.gift-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.gift-card .gc-head{background:var(--gift);color:var(--card);padding:22px;display:flex;flex-direction:column;gap:6px}
+.gift-card .gc-head h2{font-size:clamp(28px,6.5vw,36px);font-weight:800}
+.gift-card .gc-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:16px}
+.gift-card h3{font-size:16px;font-weight:600;margin:0;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.inc{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.inc li{display:flex;gap:10px;align-items:flex-start;font-size:17px}
+.inc li::before{content:"✓";flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--gift-soft);color:var(--gift);display:grid;place-items:center;font-size:13px;font-weight:700;margin-top:1px}
+.days{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.days li{display:grid;grid-template-columns:minmax(96px,8.5em) 1fr;gap:4px 14px;padding:10px 0;border-top:1px solid var(--line)}
+.days li:first-child{border-top:0}
+.days .d{font-weight:600;font-size:14px;color:var(--ec);font-variant-numeric:tabular-nums}
+.days li.party .a{font-weight:700}
+.days .cost.inc{color:var(--gift)}
+.days .cost{display:block;margin-top:4px;font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.days li.secret .a{color:var(--gift);font-weight:600}
+@media (max-width:420px){.days li{grid-template-columns:1fr}}
+.wx{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:center;background:var(--es);border-radius:14px;padding:16px 18px}
+.wx .t{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;color:var(--ec);font-variant-numeric:tabular-nums}
+.wx .t small{font-size:20px;color:var(--muted);font-weight:600}
+.wx p{margin:0}
+.tips{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tips li{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tips b{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ec)}
+.tips span{font-size:15px}
+.budget{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;overflow-x:auto}
+.budget>b{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ec)}
+.budget table{border-collapse:collapse;width:100%;font-size:15px}
+.budget th,.budget td{text-align:left;vertical-align:top;padding:8px 10px 8px 0;border-top:1px solid var(--line)}
+.budget tr:first-child th,.budget tr:first-child td{border-top:0}
+.budget th{font-weight:600;width:42%}
+.budget .fine{margin:0}
+.rsvp{display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.rsvp h2{font-size:26px;font-weight:600}
+.rsvp p{margin:0;color:var(--muted)}
+.rsvp-opts{display:flex;flex-wrap:wrap;gap:10px}
+.rsvp-opts a,.rsvp-opts span{display:inline-block;padding:11px 16px;border-radius:12px;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:600}
+.rsvp-opts a:hover{background:var(--ink);color:var(--ground)}
+.sign{font-family:var(--display);font-size:24px;font-weight:600}
+.fine{font-size:13px;color:var(--muted)}
+.ownerbar{position:fixed;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(16px + env(safe-area-inset-bottom, 0px));z-index:5}
+
+/* ---------- Manager ---------- */
+.adm{max-width:1180px;margin:0 auto;padding-block:28px 64px;display:flex;flex-direction:column;gap:22px}
+.adm-top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+.adm-top h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-family:var(--display);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat small{color:var(--muted);font-size:13px}
+.stat.fl b{color:var(--sun)}.stat.eu b{color:var(--rhine)}.stat.gf b{color:var(--gift)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:7px 12px;cursor:pointer;font-size:14px;font-weight:500;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.btn.danger{color:var(--bad)}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.legend{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px}
+.legend b{color:var(--gift);font-weight:700}
+.list{display:flex;flex-direction:column;gap:10px}
+.g{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(150px,auto) minmax(180px,1.3fr) minmax(150px,auto);gap:12px 18px;align-items:start}
+.g > *{min-width:0}
+@media (max-width:860px){.g{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.g{grid-template-columns:1fr}}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.name{font-weight:700;font-size:16px;border:1px solid transparent;border-radius:8px;padding:3px 6px;margin-left:-7px;width:100%;background:transparent}
+.name:hover,.name:focus{border-color:var(--line);background:var(--ground)}
+.sub{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.sub input,.sub select{border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:var(--ground);font-size:13px}
+.sub input.origin{width:120px}.sub input.ppl{width:52px;font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button.f[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--sun-ink)}
+.seg button.e[aria-pressed="true"]{background:var(--rhine);border-color:var(--rhine);color:var(--rhine-ink)}
+.xrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.xrow .tag{font-size:12px;font-weight:700;width:18px}
+.xrow .tag.f{color:var(--sun)}.xrow .tag.e{color:var(--rhine)}
+.chip{border:1px dashed var(--line);background:transparent;border-radius:7px;padding:2px 7px;font-size:12px;font-weight:700;letter-spacing:.04em;cursor:pointer;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--gift-soft);border:1px solid var(--gift);color:var(--gift)}
+.none{font-size:13px;color:var(--muted)}
+.status{border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--ground);font-size:14px;width:100%}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+details.more{grid-column:1/-1;border-top:1px solid var(--line);padding-top:8px}
+details.more summary{cursor:pointer;font-size:13px;color:var(--muted)}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+@media (max-width:640px){.more-grid{grid-template-columns:1fr}}
+textarea,.field{width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--ground);font-size:14px;box-sizing:border-box}
+textarea{min-height:64px;resize:vertical}
+.linkbox{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.panel h2{font-size:20px;font-weight:600}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;align-items:end}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.checks{display:flex;gap:12px;align-items:center;font-size:14px;color:var(--ink)}
+.warn{background:var(--sun-soft);border-radius:12px;padding:10px 14px;font-size:14px}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom, 0px));background:var(--ink);color:var(--ground);padding:10px 16px;border-radius:12px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:no-preference){.forty span{transition:color .3s}}
 </style>
-</head>
-<body>
-  <div><b><span>4</span><span>0</span></b><p>Abriendo tu invitación…</p></div>
-</body>
-</html>
+
+<main id="splash" class="inv">
+  <div><div class="owner-name">Fernando’s</div><div class="forty" style="--c1:var(--sun);--c2:var(--rhine)"><span>4</span><span>0</span><span class="suf">s</span></div></div>
+  <div class="hello">
+    <div class="kicker">Nando · mayo 2027</div>
+    <h1>Esta invitación es personal</h1>
+    <p>Abre el enlace que te envió Nando para ver tu invitación.<br><span class="fine">This invitation is personal. Please open the link Nando sent you.</span></p>
+  </div>
+</main>
+
+<main id="invite" class="inv" hidden></main>
+<div id="ownerbar" class="ownerbar" hidden><button class="btn primary" id="backAdmin" type="button">← Volver a invitados</button></div>
+
+<main id="admin" class="adm" hidden>
+  <div class="adm-top">
+    <div><div class="kicker">Cumpleaños 40 · mayo 2027</div><h1>Invitados</h1></div>
+    <div class="bar"><button class="btn" id="toggleSettings" type="button">Ajustes de la invitación</button></div>
+  </div>
+  <div id="settingsPanel" class="panel" hidden>
+    <h2>Ajustes</h2>
+    <div class="form">
+      <label>WhatsApp de Nando (para las respuestas, con código de país)<input class="field" id="setWa" placeholder="Ej. 5491100000000" inputmode="tel"></label>
+      <label>Enlace de esta página<input class="field" id="setUrl" placeholder="https://claude.ai/..."></label>
+    </div>
+    <p class="fine">Los cambios aquí se aplican a los enlaces que copies desde ahora. Si cambias el WhatsApp, vuelve a enviar los enlaces ya enviados solo si quieres que respondan al número nuevo.</p>
+  </div>
+  <div id="warnBox" class="warn" hidden></div>
+  <div class="stats" id="stats"></div>
+  <div class="bar" id="tabs"></div>
+  <div class="legend"><span>Detalles extra (solo los ve quien los tiene):</span><span><b>HOSP ORL</b> hospedaje en Orlando</span><span><b>HOSP COL</b> hospedaje en Colonia</span><span><b>COMIDA $50</b> bono de 50 USD diarios en Europa</span><span><b>COM</b> bono de comida</span><span><b>UNI</b> entrada a Universal el 12 de mayo</span><span><b>DIS</b> entrada al día Disney</span><span><b>HOSP AMS</b> hospedaje en Ámsterdam, 2 noches</span><span><b>VISA</b> documentos de apoyo para la visa</span><span><b>+DÍAS</b> Valle del Rin, Ámsterdam, city tour y Phantasialand</span><span><b>BÉLGICA</b> Gante y Brujas, dos días al final</span></div>
+  <div class="list" id="list"><div class="empty">Cargando la lista…</div></div>
+  <div class="panel">
+    <h2>Agregar invitado</h2>
+    <form class="form" id="addForm">
+      <label>Nombre o grupo<input class="field" id="addName" required placeholder="Ej. Nick y familia"></label>
+      <label>De dónde<input class="field" id="addOrigin" placeholder="Ej. Bélgica"></label>
+      <label>Personas<input class="field" id="addPpl" type="number" min="1" value="1"></label>
+      <label>Idioma<select class="field" id="addLang"><option value="es">Español (tú)</option><option value="esu">Español (usted)</option><option value="esa">Español (vos)</option><option value="en">English</option></select></label>
+      <div class="checks"><label class="checks"><input type="checkbox" id="addF"> Florida</label><label class="checks"><input type="checkbox" id="addE"> Europa</label></div>
+      <button class="btn primary" type="submit">Agregar</button>
+    </form>
+  </div>
+</main>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+function h(tag,attrs,...kids){const el=document.createElement(tag);for(const [k,v] of Object.entries(attrs||{})){if(v==null||v===false)continue;if(k==='class')el.className=v;else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else el.setAttribute(k,v===true?'':v);}for(const kid of kids.flat()){if(kid==null||kid===false)continue;el.append(kid.nodeType?kid:document.createTextNode(String(kid)));}return el;}
+let toastT;function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2600);}
+
+/* ---------- invitation codes (base62 of the JSON, safe for a #hash) ---------- */
+const B62='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+function enc(obj){const bytes=new TextEncoder().encode(JSON.stringify(obj));let n=0n;for(const b of bytes)n=n*256n+BigInt(b);let s='';while(n>0n){s=B62[Number(n%62n)]+s;n/=62n;}return 'i'+s;}
+function dec(s){try{if(!s||s[0]!=='i')return null;let n=0n;for(const c of s.slice(1)){const v=B62.indexOf(c);if(v<0)return null;n=n*62n+BigInt(v);}const bytes=[];while(n>0n){bytes.unshift(Number(n%256n));n/=256n;}const o=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes)));return (o&&o.n)?o:null;}catch(e){return null;}}
+
+/* ---------- content ---------- */
+const EXTRAS={
+  alo:{code:'HOSP',codes:{f:'HOSP ORL',e:'HOSP COL'},label:'Alojamiento (Orlando o Colonia)',es:'Tu alojamiento corre por mi cuenta.',esu:'Su alojamiento corre por mi cuenta.',en:'Your accommodation is on me.',f:{es:'Tu alojamiento en Orlando corre por mi cuenta.',esu:'Su alojamiento en Orlando corre por mi cuenta.',en:'Your accommodation in Orlando is on me.'},e:{es:'Tu alojamiento en Colonia corre por mi cuenta.',esu:'Su alojamiento en Colonia corre por mi cuenta.',en:'Your accommodation in Cologne is on me.'}},
+  com:{code:'COM',codes:{e:'COMIDA $50'},label:'Bono de comida',es:'Un bono para tus comidas durante esos días.',esu:'Un bono para sus comidas durante esos días.',en:'A food allowance for your meals during those days.',e:{es:'Un bono de comida de 50 USD por día durante tu estadía en Europa.',esu:'Un bono de comida de 50 USD por día durante su estadía en Europa.',en:'A food allowance of USD 50 per day during your stay in Europe.'}},
+  uni:{code:'UNI',label:'Entrada a Universal (12 de mayo)',only:'f',es:'Tu entrada a Universal e Islands of Adventure el día de mi cumpleaños.',esu:'Su entrada a Universal e Islands of Adventure el día de mi cumpleaños.',en:'Your Universal and Islands of Adventure ticket for my birthday.'},
+  ams:{code:'HOSP AMS',label:'Alojamiento en Ámsterdam (2 noches)',only:'e',es:'Tus dos noches de alojamiento en Ámsterdam, el 24 y 25 de mayo.',esu:'Sus dos noches de alojamiento en Ámsterdam, el 24 y 25 de mayo.',en:'Your two nights of accommodation in Amsterdam, May 24 and 25.'},
+  vis:{code:'VISA',label:'Documentos de apoyo para la visa',only:'e',es:'Los documentos de apoyo para tu visa Schengen: la carta de invitación y el detalle de lo que cubrimos.',esu:'Los documentos de apoyo para su visa Schengen: la carta de invitación y el detalle de lo que cubrimos.',en:'Support documents for your Schengen visa: the invitation letter and a breakdown of what we cover.'},
+  par:{code:'DIS',label:'Entrada al día Disney',only:'f',es:'Tu entrada al día Disney, con los tres parques.',esu:'Su entrada al día Disney, con los tres parques.',en:'Your ticket for the Disney day, all three parks.'}
+
+};
+const PLANS={
+  ext:{code:'+DÍAS',label:'Días extra: Ámsterdam, Valle del Rin, city tour y Phantasialand'},
+  prs:{code:'BÉLGICA',label:'Gante y Brujas, dos días al final'}
+};
+/* Photos: filled in later as data: URIs. hero = up to 3 polaroids under the greeting; colonia = one polaroid in the Cologne tab. */
+const PHOTOS={hero:[{src:'photos/p24.jpg',cap:'1987'},{src:'photos/p01.jpg'},{src:'photos/p02.jpg'}],colonia:null,
+  timeline:[], /* Fotos de crecimiento para "40 años en fotos": fijas, en orden, y nunca en el banner */
+  tabs:{home:[{src:'photos/p28.jpg'},{src:'photos/p26.jpg'},{src:'photos/p16.jpg'},{src:'photos/p18.jpg'},{src:'photos/p19.jpg'},{src:'photos/p13.jpg'},{src:'photos/p21.jpg'},{src:'photos/p22.jpg'},{src:'photos/p05.jpg'}],fl:[{src:'photos/p27.jpg'},{src:'photos/p17.jpg'},{src:'photos/p11.jpg'},{src:'photos/p23.jpg'}],eu:[{src:'photos/p06.jpg',cap:{es:'Budapest',en:'Budapest'}},{src:'photos/p07.jpg',cap:{es:'Moscú',en:'Moscow'}},{src:'photos/p04.jpg'}],trip:[{src:'photos/p09.jpg',cap:{es:'Machu Picchu',en:'Machu Picchu'}},{src:'photos/p10.jpg',cap:{es:'Salar de Uyuni',en:'Uyuni salt flats'}},{src:'photos/p03.jpg'},{src:'photos/p12.jpg'},{src:'photos/p14.jpg'}],gift:[{src:'photos/p25.jpg'},{src:'photos/p20.jpg'}]}};
+
+const ICON={
+  fl:'<svg viewBox="0 0 120 90" aria-hidden="true"><circle cx="70" cy="34" r="16" fill="currentColor"/><g stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M70 6v6M70 56v6M42 34h6M92 34h6M50 14l4 4M86 50l4 4M90 14l-4 4M54 50l-4 4"/></g><path d="M0 76c15-10 30-10 45 0s30 10 45 0 30-10 45 0v14H0z" fill="currentColor"/></svg>',
+  eu:'<svg viewBox="0 0 120 90" aria-hidden="true"><path d="M22 90V36l9-34 9 34v54zM80 90V36l9-34 9 34v54zM40 90V58h40v32z" fill="currentColor"/><path d="M0 84c20-6 40-6 60 0s40 6 60 0v6H0z" fill="currentColor"/></svg>',
+  days:'<svg viewBox="0 0 120 90" aria-hidden="true"><rect x="14" y="22" width="92" height="62" rx="8" fill="none" stroke="currentColor" stroke-width="6"/><path d="M14 40h92M38 12v18M82 12v18" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>'
+};
+function svg(k){const s=document.createElement('span');s.innerHTML=ICON[k];return s.firstChild;}
+
+const DAYS={
+ es:{title:'Unos días más',intro:'Para quienes vienen de lejos, armé unos días más juntos alrededor del asado.',
+  rows:[['Lunes 24','Llegada a Ámsterdam. Día tranquilo para descansar del viaje y, en la tarde, paseo en barco por los canales.','ext','@ams|≈ 20 € (barco por los canales)'],['Martes 25','Molinos de Zaanse Schans en la mañana y centro histórico de Ámsterdam en la tarde.','ext','@ams|≈ 15 € (tren y molinos)'],['Miércoles 26','Tren a Colonia y tarde libre para instalarse','ext','@col|≈ 30 a 50 € (tren)'],['Jueves 27','Valle del Rin: barco entre castillos y viñedos, por la zona de la Roca de Loreley (feriado en Alemania)','ext','≈ 70 € (tren y barco)'],['Viernes 28','City tour por Colonia: la catedral, el casco antiguo y el Rin','ext','≈ 25 € (torre de la catedral y barco por el Rin)'],['Sábado 29','El asado','party',''],['Domingo 30','Domingo tranquilo en Colonia con los amigos','',''],['Lunes 31','Phantasialand, el parque de diversiones junto a Colonia','ext','≈ 60 € (entrada; niños, menos)'],['Martes 1 y miércoles 2 de junio','Viaje de dos días a Bélgica: Gante y Brujas, con una noche de hotel','prs','≈ 300 a 350 € (tren, hotel, entradas y comidas)']],
+  notInc:'A cada plan puedes sumarte o no, como prefieras: al lado de cada uno está lo que cuesta, para que lo organices con calma.',notIncAms:'Si te animas a venir, las noches en Ámsterdam corren por mi cuenta. A todo lo demás puedes sumarte o no, como prefieras: al lado de cada plan está lo que cuesta, para que lo organices con calma.',amsInc:'Alojamiento en Ámsterdam: corre por mi cuenta',amsExtra:' + alojamiento (≈ 100 € por noche)',colInc:'Alojamiento en Colonia: corre por mi cuenta',colExtra:' + alojamiento en Colonia (≈ 100 € por noche)',places:['Ámsterdam','Colonia','Ámsterdam y en Colonia'],cov:(x,f)=>{const p=[];if(x)p.push(`el alojamiento en ${x}`);if(f)p.push('un bono de comida de 50 USD por día');return `Si te animas a venir, ${p.join((x&&x.includes(' y '))?', y ':' y ')} ${p.length>1?'corren':'corre'} por mi cuenta. `;},rest:'A todo lo demás puedes sumarte o no, como prefieras: al lado de cada plan está lo que cuesta, para que lo organices con calma.',
+  tbc:'Fechas tentativas. Presupuestos aproximados por persona, con precios de hoy; las comidas van aparte (en Alemania, unos 15 a 25 € por comida).'},
+ en:{title:'A few more days',intro:'For those coming from far away, I planned a few more days together around the barbecue.',
+  rows:[['Mon 24','Arrival in Amsterdam. An easy day to rest after the trip and, in the afternoon, a canal boat ride.','ext','@ams|≈ €20 (canal boat)'],['Tue 25','The Zaanse Schans windmills in the morning and Amsterdam’s old town in the afternoon.','ext','@ams|≈ €15 (train and windmills)'],['Wed 26','Train to Cologne and a free afternoon to settle in','ext','@col|≈ €30–50 (train)'],['Thu 27','Rhine Valley: a boat ride past castles and vineyards, around the Loreley rock (public holiday in Germany)','ext','≈ €70 (train and boat)'],['Fri 28','Cologne city tour: the cathedral, the old town and the Rhine','ext','≈ €25 (cathedral tower and Rhine boat)'],['Sat 29','The barbecue','party',''],['Sun 30','A quiet Sunday in Cologne with friends','',''],['Mon 31','Phantasialand, the theme park next to Cologne','ext','≈ €60 (ticket; less for kids)'],['Tue 1 & Wed 2 June','Two-day trip to Belgium: Ghent and Bruges, with one hotel night','prs','≈ €300–350 (train, hotel, tickets and meals)']],
+  notInc:'Join whichever plans you like, or none at all: each one shows what it costs, so you can plan at your own pace.',notIncAms:'If you’d like to come, your nights in Amsterdam are on me. Everything else you’re welcome to join or skip, whatever suits you: each plan shows what it costs, so you can plan at your own pace.',amsInc:'Amsterdam accommodation: on me',amsExtra:' + accommodation (≈ €100 per night)',colInc:'Cologne accommodation: on me',colExtra:' + accommodation in Cologne (≈ €100 per night)',places:['Amsterdam','Cologne','Amsterdam and Cologne'],cov:(x,f)=>{const p=[];if(x)p.push(`your accommodation in ${x}`);if(f)p.push('a food allowance of USD 50 per day');return `If you’d like to come, ${p.join((x&&x.includes(' and '))?', and ':' and ')} ${p.length>1?'are':'is'} on me. `;},rest:'Everything else you’re welcome to join or skip, whatever suits you: each plan shows what it costs, so you can plan at your own pace.',
+  tbc:'Dates are tentative. Rough budgets per person at today’s prices; meals are extra (in Germany, about €15–25 per meal).'}
+};
+DAYS.esu=Object.assign({},DAYS.es,{cov:(x,f)=>{const p=[];if(x)p.push(`el alojamiento en ${x}`);if(f)p.push('un bono de comida de 50 USD por día');return `Si se anima a venir, ${p.join((x&&x.includes(' y '))?', y ':' y ')} ${p.length>1?'corren':'corre'} por mi cuenta. `;},rest:'A todo lo demás puede sumarse o no, como prefiera: al lado de cada plan está lo que cuesta, para que lo organice con calma.',notInc:'A cada plan puede sumarse o no, como prefiera: al lado de cada uno está lo que cuesta, para que lo organice con calma.',notIncAms:'Si se anima a venir, las noches en Ámsterdam corren por mi cuenta. A todo lo demás puede sumarse o no, como prefiera: al lado de cada plan está lo que cuesta, para que lo organice con calma.'});
+DAYS.esa=Object.assign({},DAYS.es,{cov:(x,f)=>{const p=[];if(x)p.push(`el alojamiento en ${x}`);if(f)p.push('un bono de comida de 50 USD por día');return `Si te animás a venir, ${p.join((x&&x.includes(' y '))?', y ':' y ')} ${p.length>1?'corren':'corre'} por mi cuenta. `;},rest:'A todo lo demás podés sumarte o no, como prefieras: al lado de cada plan está lo que cuesta, para que lo organices con calma.',notInc:'A cada plan podés sumarte o no, como prefieras: al lado de cada uno está lo que cuesta, para que lo organices con calma.',notIncAms:'Si te animás a venir, las noches en Ámsterdam corren por mi cuenta. A todo lo demás podés sumarte o no, como prefieras: al lado de cada plan está lo que cuesta, para que lo organices con calma.'});
+
+const TRIP={
+ es:{title:'Para el viaje',
+  fl:{head:'Orlando a mediados de mayo',t:'31°',lo:'20°',wx:'Calor húmedo de verano. Casi todas las tardes cae un aguacero corto y luego vuelve el sol.',
+   tips:[['Cómo llegar','Al aeropuerto de Orlando (MCO). Desde Ecuador también hay vuelos a Miami; de ahí son unas 3 h 30 en auto.'],['Qué llevar','Ropa fresca, zapatos cómodos para caminar todo el día, protector solar, gorra y un poncho de lluvia.'],['Parques','Para el día Disney y el día Universal se necesitan entradas que permitan cambiar de parque el mismo día (Park Hopper en Disney, Park-to-Park en Universal). Epic Universe va con entrada aparte. La app de cada parque muestra los tiempos de espera.'],['Moverse','En Orlando conviene auto: los parques quedan a 20 o 30 minutos entre sí.']]},
+  eu:{head:'Colonia a fines de mayo',t:'20°',lo:'10°',wx:'Primavera fresca y de días largos: oscurece después de las 9 de la noche. Puede llover cualquier día.',
+   tips:[['Cómo llegar','Al aeropuerto de Colonia/Bonn (CGN), a 15 minutos del centro en tren. También sirven Düsseldorf (DUS, 40 minutos en tren) y Frankfurt (FRA, 1 hora en tren rápido).'],['Visa','Con pasaporte ecuatoriano se necesita visa Schengen. Conviene pedirla con 2 o 3 meses de anticipación.'],['Qué llevar','Ropa en capas, una chaqueta ligera, paraguas y zapatos cómodos para caminar.'],['Dinero','Euros. Se paga con tarjeta casi en todas partes, pero en Alemania todavía conviene llevar algo de efectivo.'],['Enchufes','230 V y enchufe europeo de dos patas redondas: desde Ecuador hace falta adaptador.'],['Un dato','La torre de la catedral de Colonia tiene 533 escalones hasta el mirador. Valen la pena.']]}},
+ en:{title:'Travel tips',
+  fl:{head:'Orlando in mid-May',t:'31°',lo:'20°',wx:'Humid summer heat (about 88 °F by day). Most afternoons bring a short downpour, then the sun is back.',
+   tips:[['Getting there','Fly into Orlando (MCO). Miami also works; from there it’s about a 3.5-hour drive.'],['What to pack','Light clothes, comfortable shoes for walking all day, sunscreen, a cap and a rain poncho.'],['Theme parks','The Disney and Universal days need tickets that let you switch parks the same day (Park Hopper at Disney, Park-to-Park at Universal). Epic Universe needs its own ticket. Each park’s app shows the wait times.'],['Getting around','A car is the easiest way: the parks are 20 to 30 minutes apart.']]},
+  eu:{head:'Cologne in late May',t:'20°',lo:'10°',wx:'Fresh spring weather with long days: it gets dark after 9 pm. Rain is possible any day.',
+   tips:[['Getting there','Cologne/Bonn airport (CGN) is 15 minutes from the centre by train. Düsseldorf (DUS, 40 minutes by train) and Frankfurt (FRA, 1 hour by fast train) also work. From Amsterdam or Brussels there are direct trains.'],['What to pack','Layers, a light jacket, an umbrella and comfortable walking shoes.'],['Money','Euros. Cards work almost everywhere, but in Germany it still helps to carry some cash.'],['Plugs','230 V with the European two-round-pin plug: bring an adapter from the US.'],['A fun fact','The cathedral tower has 533 steps up to the viewing platform. Worth every one.']]}}
+};
+TRIP.esu=TRIP.es; TRIP.esa=TRIP.es;
+const ECU={
+ title:'Presupuesto del viaje desde Ecuador',
+ note:'Valores aproximados por persona, con precios de hoy. Lo que corre por mi cuenta no hace falta sumarlo.',
+ fl:[['Pasaje Ecuador–Orlando, ida y vuelta','≈ 450 a 800 USD (también se puede volar a Miami y seguir 3 h 30 en auto)'],['Visa de EE. UU.','Ya vigente para la mayoría; si hay que renovarla, desde 185 USD'],['Seguro médico de viaje','≈ 30 a 60 USD (muy recomendado en EE. UU.)'],['Alquiler de auto','≈ 50 a 80 USD por día por auto, a dividir entre los que viajen juntos'],['Estacionamiento en los parques','≈ 30 USD por día por auto'],['Comidas','≈ 40 a 70 USD por día'],['Entradas a los parques','Ver el presupuesto de cada día en la pestaña Florida']],
+ eu:[['Pasaje Ecuador–Ámsterdam, ida y vuelta','≈ 1.100 a 1.600 USD (KLM vuela directo desde Quito y Guayaquil)'],['Visa Schengen','≈ 100 a 150 USD (tasa de 90 € más gastos del trámite)'],['Viaje a Quito para la cita de la visa','≈ 50 a 150 USD, para quienes viven fuera de Quito'],['Seguro de viaje Schengen','≈ 40 a 80 USD (cobertura mínima de 30.000 €, obligatorio para la visa)'],['Comidas','≈ 40 a 60 € por día'],['Chip o eSIM con datos','≈ 15 a 25 USD'],['Trenes y paseos','Ver el presupuesto de cada plan en los días extra']]
+};
+
+const T={
+ es:{hi:n=>`Hola, ${n}`,both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuvieras en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo contigo.',
+  tabs:{home:'Inicio',fl:'Florida',eu:'Colonia',days:'Días extra',trip:'Viaje',gift:'Para ti'},see:'Ver detalles →',
+  fl:{kick:'Orlando, Florida',title:'Semana del 12 de mayo de 2027',p:['A los 20 años, Universal, en Orlando, fue mi primer trabajo de verdad y la primera vez que viví solo en otro país, lejos de casa, por varios meses. Volver ahí para cumplir 40 tiene algo especial.','Mi cumpleaños cae el miércoles 12. La idea es pasar unos días juntos con mi familia y amigos de este lado del mundo, entre parques, cohetes, compras y buenas cenas. Cada quien se suma a lo que quiera.'],plan:[['Miércoles 12, mi cumpleaños','Universal Studios e Islands of Adventure, los dos parques el mismo día.','party','≈ 200 USD (entrada Park-to-Park)'],['Jueves 13','Kennedy Space Center: un día en Cabo Cañaveral, entre cohetes y la historia de la NASA.','','≈ 80 USD (entrada)'],['Viernes 14','Día Disney, tres parques en un día: Animal Kingdom en la mañana, Hollywood Studios en la tarde y Magic Kingdom para los fuegos artificiales.','','≈ 200 USD (entrada Park Hopper)'],['Sábado 15','Epic Universe, el parque más nuevo de Universal. Yo voy; quien quiera, se suma.','','≈ 150 USD (entrada)'],['Domingo 16','Compras en los outlets y cena de despedida.','','']],planNote:'Todos los días de parque son opcionales. Si alguien prefiere ir a otro parque o hacer otra cosa ese día, perfecto: cada quien arma sus días como quiera. Los presupuestos son aproximados por persona, con precios de hoy; para 2027 pueden subir.',facts:['Cenas en grupo'],tbc:'Fechas tentativas; los detalles, por confirmar.'},
+  eu:{kick:'Colonia, Alemania',title:'Sábado 29 de mayo de 2027',p:['Tenía 23 años cuando conocí Colonia. Fue la primera vez que viví otra cultura de verdad, y me cambió la forma de ver el mundo. Por eso quiero celebrar mis 40 ahí.','Ese día quiero juntar en una misma mesa a amigos de más de diez países: gente que conocí en distintas etapas de mi vida y que por fin se va a conocer entre sí.','La idea es un asado tranquilo de día, ojalá en una casa de campo en las afueras: música, juegos, niños corriendo y mucha conversación. Danny y yo llevamos un toque ecuatoriano para probar, y habrá piñata para los más pequeños.'],facts:['Asado de día','Para toda la familia','Amigos de más de diez países','Fin de semana largo: el jueves 27 es feriado en Renania del Norte-Westfalia'],tbc:'Confirmado: el día y el asado. El lugar, el horario y los demás detalles, por confirmar.',dress:['Código de vestimenta: día de campo','Jeans, camisas sencillas y colores de primavera. Nada formal, y zapatos cómodos para el pasto.']},
+  gift:'Un detalle para ti',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerte por estar.',giftFl:'En Florida',giftEu:'En Europa',giftDays:'Además, te invito a quedarte unos días más con nosotros: los ves aquí abajo.',seeDays:'Ver los días extra →',giftHint:'Hay algo preparado exclusivamente para ti →',
+  rsvpT:'¿Lo ves posible?',rsvpP:'Todavía no te pido confirmación, solo una idea sincera. Cuéntame antes del 30 de noviembre.',
+  opts:['Sí, lo intento','Lo voy a pensar','Este año no, nos vemos en los 41'],optsBoth:['Sí, a las dos','Solo a Florida','Solo a Colonia','Lo voy a pensar','Este año no, nos vemos en los 41'],bothNote:'Si solo puedes ir a una, perfecto: elige la que te quede mejor.',
+  waMsg:o=>`Hola Nando, sobre tu cumpleaños 40: ${o}`,noWa:'Respóndele a Nando por WhatsApp con una de estas opciones:',
+  sign:'Con cariño, Nando',fine:'Esta invitación es personal.',colCap:'Colonia, a los 23'},
+ en:{hi:n=>`Hi, ${n}`,both:'I’m turning 40 this year and celebrating twice. I’d love for you to be at both.',one:'I’m turning 40 this year and I’d love to celebrate it with you.',
+  tabs:{home:'Home',fl:'Florida',eu:'Cologne',days:'Extra days',trip:'Travel',gift:'For you'},see:'See details →',
+  fl:{kick:'Orlando, Florida',title:'Week of May 12, 2027',p:['At 20, Universal in Orlando was my first real job, and the first time I lived on my own in another country, far from home, for several months. Going back there to turn 40 feels special.','My birthday falls on Wednesday the 12th. The plan is a few days together with family and friends from this side of the world: theme parks, rockets, shopping and good dinners. Everyone joins whatever they like.'],plan:[['Wed, May 12, my birthday','Universal Studios and Islands of Adventure, both parks on the same day.','party','≈ $200 (Park-to-Park ticket)'],['Thu 13','Kennedy Space Center: a day at Cape Canaveral, with rockets and NASA history.','','≈ $80 (ticket)'],['Fri 14','Disney day, three parks in one day: Animal Kingdom in the morning, Hollywood Studios in the afternoon and Magic Kingdom for the fireworks.','','≈ $200 (Park Hopper ticket)'],['Sat 15','Epic Universe, Universal’s newest park. I’m going; anyone who wants can join.','','≈ $150 (ticket)'],['Sun 16','Outlet shopping and a farewell dinner.','','']],planNote:'Every park day is optional. If you’d rather visit a different park or do something else that day, that’s perfectly fine: plan your days however you like. Budgets are rough per-person figures at today’s prices and may go up for 2027.',facts:['Group dinners'],tbc:'Dates are tentative; details to be confirmed.'},
+  eu:{kick:'Cologne, Germany',title:'Saturday, May 29, 2027',p:['I was 23 when I first came to Cologne. It was my first real taste of another culture, and it changed the way I see the world. That’s why I want to celebrate my 40th there.','That day I want to bring friends from more than ten countries together at one table: people I met at different stages of my life, finally meeting each other.','The idea is a relaxed daytime barbecue, hopefully at a country house just outside the city: music, games, kids running around and lots of good conversation. Danny and I will bring a little taste of Ecuador, and there will be a piñata for the kids.'],facts:['Daytime barbecue','Family friendly','Friends from more than ten countries','Long weekend: Thursday 27 is a public holiday in North Rhine-Westphalia'],tbc:'Confirmed: the date and the barbecue. Venue, times and other details to be confirmed.',dress:['Dress code: day in the countryside','Jeans, simple shirts and spring colours. Nothing fancy, and comfy shoes for the grass.']},
+  gift:'Something just for you',giftIntro:'This is on me. It’s my way of saying thank you for being there.',giftFl:'In Florida',giftEu:'In Europe',giftDays:'I’d also love for you to stay a few more days with us: see them below.',seeDays:'See the extra days →',giftHint:'There’s something exclusively for you →',
+  rsvpT:'Do you see it as possible?',rsvpP:'No firm answer yet, just an honest idea. Let me know by November 30.',
+  opts:['Yes, I’ll try','Let me think about it','Not this year, see you at 41'],optsBoth:['Yes, both','Only Florida','Only Cologne','Let me think about it','Not this year, see you at 41'],bothNote:'If you can only make one, that’s perfectly fine: pick the one that works best for you.',
+  waMsg:o=>`Hi Nando, about your 40th: ${o}`,noWa:'Reply to Nando on WhatsApp with one of these:',
+  sign:'With love, Nando',fine:'This invitation is personal.',colCap:'Cologne, at 23'}
+};
+T.esu=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuviera en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con usted.',tabs:Object.assign({},T.es.tabs,{gift:'Para usted'}),gift:'Un detalle para usted',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerle por estar.',giftDays:'Además, le invito a quedarse unos días más con nosotros: los ve aquí abajo.',giftHint:'Hay algo preparado exclusivamente para usted →',rsvpT:'¿Lo ve posible?',rsvpP:'Todavía no le pido confirmación, solo una idea sincera. Cuénteme antes del 30 de noviembre.',noWa:'Respóndale a Nando por WhatsApp con una de estas opciones:',bothNote:'Si solo puede ir a una, perfecto: elija la que le quede mejor.'});
+T.esa=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estés en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con vos.',tabs:Object.assign({},T.es.tabs,{gift:'Para vos'}),gift:'Un detalle para vos',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerte por estar.',giftDays:'Además, te invito a quedarte unos días más con nosotros: los ves acá abajo.',giftHint:'Hay algo preparado exclusivamente para vos →',rsvpP:'Todavía no te pido confirmación, solo una idea sincera. Contame antes del 30 de noviembre.',noWa:'Respondele a Nando por WhatsApp con una de estas opciones:',bothNote:'Si solo podés ir a una, perfecto: elegí la que te quede mejor.'});
+
+T.pl={both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuvieran en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con ustedes.',gift:'Un detalle para ustedes',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerles por estar.',giftDays:'Además, los invito a quedarse unos días más con nosotros: los ven aquí abajo.',giftHint:'Hay algo preparado exclusivamente para ustedes →',rsvpT:'¿Lo ven posible?',rsvpP:'Todavía no les pido confirmación, solo una idea sincera. Cuéntenme antes del 30 de noviembre.',bothNote:'Si solo pueden ir a una, perfecto: elijan la que les quede mejor.',noWa:'Respóndanle a Nando por WhatsApp con una de estas opciones:'};
+DAYS.pl={cov:(x,f)=>{const p=[];if(x)p.push(`el alojamiento en ${x}`);if(f)p.push('un bono de comida de 50 USD por día');return `Si se animan a venir, ${p.join((x&&x.includes(' y '))?', y ':' y ')} ${p.length>1?'corren':'corre'} por mi cuenta. `;},rest:'A todo lo demás pueden sumarse o no, como prefieran: al lado de cada plan está lo que cuesta, para que lo organicen con calma.',notInc:'A cada plan pueden sumarse o no, como prefieran: al lado de cada uno está lo que cuesta, para que lo organicen con calma.'};
+function polaroid(src,cap,solo){return h('figure',{class:'polaroid'+(solo?' solo':'')},h('img',{src,alt:cap||'Foto de Nando',loading:'lazy',decoding:'async'}),cap?h('figcaption',null,cap):null);}
+function confetti(){const box=h('div',{class:'confetti','aria-hidden':'true'});const cols=['var(--sun)','var(--rhine)','var(--gift)'];let seed=7;const r=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
+  for(let i=0;i<26;i++){const w=4+r()*8;box.append(h('i',{style:`left:${(r()*100).toFixed(1)}%;top:${(r()*100).toFixed(1)}%;width:${w.toFixed(0)}px;height:${(w*(r()>.5?1:2.2)).toFixed(0)}px;background:${cols[i%3]};transform:rotate(${(r()*180).toFixed(0)}deg)`}));}return box;}
+
+function showInvite(d){
+  d.l=T[d.l]?d.l:'es'; const pl=(Number(d.p)||1)>1&&d.l!=='en';
+  const t=pl?Object.assign({},T[d.l],T.pl,{tabs:Object.assign({},T[d.l].tabs,{gift:'Para ustedes'})}):T[d.l], dy=pl?Object.assign({},DAYS[d.l],DAYS.pl):DAYS[d.l], tr=TRIP[d.l];
+  const lk=pl?'esu':d.l;
+  const both=d.f&&d.e;
+  const xf=d.f?(d.xf||[]).filter(k=>EXTRAS[k]):[], xeg=d.e?['ams','alo','com','vis'].filter(k=>(d.xe||[]).includes(k)):[];
+  const xd=d.e&&(d.xe||[]).some(k=>PLANS[k]);
+  const hasGift=xf.length||xeg.length;
+  const extraTxt=(k,side)=>{const x=EXTRAS[k],v=(side&&x[side])||x;return v[lk]||v[d.l==='en'?'en':'es'];};
+  const wa=(d.w||'').replace(/[^0-9]/g,'');
+  const c1=d.f?'var(--sun)':'var(--rhine)', c2=d.e?'var(--rhine)':'var(--sun)';
+
+  const tabs=[['home',t.tabs.home]];
+  if(d.f)tabs.push(['fl',t.tabs.fl]); if(d.e)tabs.push(['eu',t.tabs.eu]);
+  tabs.push(['trip',t.tabs.trip]); if(hasGift||xd)tabs.push(['gift',t.tabs.gift]);
+  const panels={}; const bar=h('nav',{class:'tabs',role:'tablist'});
+  function go(k){shuffleHero();for(const [id] of tabs){panels[id].hidden=id!==k;const b=bar.querySelector(`[data-k="${id}"]`);b.setAttribute('aria-selected',String(id===k));if(id===k)b.scrollIntoView({block:'nearest',inline:'nearest'});}
+    const top=bar.getBoundingClientRect().top+window.scrollY-8; if(window.scrollY>top)window.scrollTo({top});}
+  for(const [k,l] of tabs)bar.append(h('button',{type:'button',role:'tab','data-k':k,class:k==='gift'?'gifttab':null,'aria-selected':'false',onclick:()=>go(k)},l));
+  const hint=()=>hasGift?h('button',{class:'hint',type:'button',onclick:()=>go('gift')},t.giftHint):null;
+
+  const event=(kind)=>{const c=t[kind];return h('section',{class:'event '+kind},
+    h('div',{class:'event-head'},svg(kind),h('div',{class:'kicker'},c.kick),h('h2',null,c.title)),
+    h('div',{class:'event-body'},c.p.map(p=>h('p',null,p)),c.plan?h('ul',{class:'days'},c.plan.map(([a,b,cl,m])=>h('li',{class:cl||''},h('span',{class:'d'},a),h('span',{class:'a'},b,m?h('span',{class:'cost'},m):null)))):null,c.planNote?h('p',{class:'note'},c.planNote):null,h('ul',{class:'facts'},c.facts.map(f=>h('li',null,f))),
+      c.dress?h('div',{class:'dress'},h('b',null,c.dress[0]),h('span',null,c.dress[1]),h('i',{'aria-hidden':'true'},['var(--sun)','var(--rhine)','var(--gift)','#F2B8C6','#F5D76E'].map(col=>h('em',{style:'background:'+col})))):null,
+      ((kind==='fl'&&xf.length)||(kind==='eu'&&xeg.length))?hint():null,h('div',{class:'tbc'},c.tbc)));};
+  const tile=(kind)=>{const c=t[kind];return h('button',{class:'tile '+kind,type:'button',onclick:()=>go(kind)},svg(kind),h('small',null,c.kick),h('b',null,c.title),h('span',{class:'go'},t.see));};
+  const rsvp=h('section',{class:'rsvp'},h('h2',null,t.rsvpT),h('p',null,t.rsvpP),both?h('p',null,t.bothNote):null,wa?null:h('p',null,t.noWa),
+    h('div',{class:'rsvp-opts'},(both?t.optsBoth:t.opts).map(o=>wa?h('a',{href:`https://wa.me/${wa}?text=${encodeURIComponent(t.waMsg(o))}`,target:'_blank',rel:'noopener'},o):h('span',null,o))),
+    wa?h('p',{class:'fine'},'WhatsApp: +'+wa):null);
+  const tripBlock=(kind)=>{const x=tr[kind];return h('section',{class:'panel-inv '+kind},
+    h('div',{class:'kicker'},x.head),
+    h('div',{class:'wx'},h('div',{class:'t'},x.t,h('small',null,' / '+x.lo)),h('p',null,x.wx)),
+    h('ul',{class:'tips'},x.tips.filter(([b])=>!(d.l==='esa'&&b==='Visa')).map(([b,s])=>h('li',null,h('b',null,b),h('span',null,s)))),
+    (d.l==='es'||d.l==='esu')?h('div',{class:'budget'},h('b',null,ECU.title),h('table',null,h('tbody',null,ECU[kind].map(([a,v])=>h('tr',null,h('th',{scope:'row'},a),h('td',null,v))))),h('p',{class:'fine'},ECU.note)):null);};
+
+  const ce=d.l==='en'?'en':'es';
+  const strip=k=>h('div',{class:'strip'},(PHOTOS.tabs[k]||[]).map((p,i)=>{const f=polaroid(p.src,p.cap?p.cap[ce]:null);f.style.setProperty('--r',(i%2?1.5:-1.5)+'deg');return f;}));
+  const gal=!PHOTOS.timeline.length?null:h('section',{class:'gallery'},h('h2',null,ce==='en'?'40 years in pictures':'40 años en fotos'),h('p',null,ce==='en'?'Places and people that brought me here.':'Lugares y personas que me trajeron hasta aquí.'),
+    h('div',{class:'strip'},PHOTOS.timeline.map((p,i)=>{const f=polaroid(p.src,p.cap?(p.cap[ce]||p.cap):null);f.style.setProperty('--r',(i%2?1.5:-1.5)+'deg');return f;})));
+  panels.home=h('div',{class:'panel-inv'},h('div',{class:'tiles'},d.f?tile('fl'):null,d.e?tile('eu'):null),(hasGift||xd)?h('button',{class:'hint',type:'button',onclick:()=>go('gift')},t.giftHint):null,gal,rsvp,h('div',{class:'sign'},t.sign),h('div',{class:'fine'},t.fine));
+  if(d.f)panels.fl=h('div',{class:'panel-inv'},event('fl'));
+  if(d.e)panels.eu=h('div',{class:'panel-inv'},event('eu'),PHOTOS.colonia?h('div',{class:'collage'},polaroid(PHOTOS.colonia,t.colCap,true)):null);
+  const hasAms=d.e&&(d.xe||[]).includes('ams'), hasCol=d.e&&(d.xe||[]).includes('alo'), hasCom=d.e&&(d.xe||[]).includes('com');
+  const costEl=m=>{if(!m)return null;if(m.startsWith('@ams|')){const r=m.slice(5);return hasAms?[h('span',{class:'cost inc'},dy.amsInc),h('span',{class:'cost'},r)]:h('span',{class:'cost'},r+dy.amsExtra);}if(m.startsWith('@col|')){const r=m.slice(5);return hasCol?[h('span',{class:'cost inc'},dy.colInc),h('span',{class:'cost'},r)]:h('span',{class:'cost'},r+dy.colExtra);}return h('span',{class:'cost'},m);};
+  let daysSec=null;
+  if(xd){const xe=d.xe||[];const ext=xe.includes('ext'),prs=xe.includes('prs');
+    const rows=dy.rows.filter(([,,c])=>!c||c==='party'||(c==='ext'&&ext)||(c==='prs'&&prs)).map(([a,b,c,m])=>[[a,b,m],c==='party'?'party':'']);
+    daysSec=h('section',{class:'event eu'},
+      h('div',{class:'event-head'},svg('days'),h('div',{class:'kicker'},d.l==='en'?'May & June 2027':'Mayo y junio de 2027'),h('h2',null,dy.title)),
+      h('div',{class:'event-body'},h('p',null,dy.intro),h('p',{class:'note notinc'},(hasAms||hasCol||hasCom)?dy.cov((hasAms||hasCol)?dy.places[hasAms&&hasCol?2:hasAms?0:1]:null,hasCom)+dy.rest:dy.notInc),h('ul',{class:'days'},rows.map(([[a,b,m],c])=>h('li',{class:c},h('span',{class:'d'},a),h('span',{class:'a'},b,costEl(m))))),h('div',{class:'tbc'},dy.tbc)));}
+  panels.trip=h('div',{class:'panel-inv'},h('h2',{style:'font-size:30px;font-weight:800'},tr.title),d.f?tripBlock('fl'):null,d.e?tripBlock('eu'):null);
+  if(hasGift||xd)panels.gift=h('div',{class:'panel-inv'},hasGift?h('section',{class:'gift-card'},
+    h('div',{class:'gc-head'},h('div',{class:'kicker',style:'color:inherit;opacity:.85'},'Nando · 40'),h('h2',null,t.gift)),
+    h('div',{class:'gc-body'},h('p',{style:'margin:0;font-size:17px'},t.giftIntro),
+      xf.length?h('div',null,h('h3',null,t.giftFl),h('ul',{class:'inc'},xf.map(k=>h('li',null,extraTxt(k,'f'))))):null,
+      xeg.length?h('div',null,h('h3',null,t.giftEu),h('ul',{class:'inc'},xeg.map(k=>h('li',null,extraTxt(k,'e'))))):null,
+      xd?h('p',{style:'margin:0'},t.giftDays):null)):null,
+    daysSec);
+
+  const hero=h('header',{class:'hero'},confetti(),
+    h('div',{class:'owner-name'},'Fernando’s'),h('div',{class:'forty',style:`--c1:${c1};--c2:${c2}`,'aria-hidden':'true'},h('span',null,'4'),h('span',null,'0'),h('span',{class:'suf'},'s')),
+    h('div',{class:'hello'},h('h1',null,t.hi(d.n)),h('p',null,both?t.both:t.one),d.m?h('p',{class:'msg'},d.m):null));
+  const pool=[...PHOTOS.hero.map(p=>({src:p.src,cap:p.cap||null})),...Object.values(PHOTOS.tabs).flat().map(p=>({src:p.src,cap:p.cap?p.cap[ce]:null}))].filter(p=>d.f||p.src!=='photos/p27.jpg');
+  const collage=h('div',{class:'collage'});let lastHero=[];
+  function shuffleHero(){const pick=[];const avail=pool.filter(p=>!lastHero.includes(p.src));const src=avail.length>=3?avail:pool;const tmp=[...src];
+    while(pick.length<3&&tmp.length)pick.push(tmp.splice(Math.floor(Math.random()*tmp.length),1)[0]);
+    lastHero=pick.map(p=>p.src);collage.classList.remove('fade');void collage.offsetWidth;collage.replaceChildren(...pick.map(p=>polaroid(p.src,p.cap)));collage.classList.add('fade');}
+  shuffleHero();
+  const inv=$('#invite'); inv.replaceChildren(...[hero,collage,bar,...tabs.map(([k])=>panels[k])].filter(Boolean));
+  for(const [k] of tabs)panels[k].hidden=true; panels.home.hidden=false; bar.querySelector('[data-k="home"]').setAttribute('aria-selected','true');
+  $('#splash').hidden=true; $('#admin').hidden=true; inv.hidden=false; window.scrollTo(0,0);
+  document.documentElement.lang=d.l==='en'?'en':'es';
+  ownerCheck().then(o=>{$('#ownerbar').hidden=!o;});
+}
+
+/* ---------- routing ---------- */
+let ownerP;
+function ownerCheck(){return ownerP||(ownerP=(async()=>{try{const u=window.claude&&window.claude.use?await window.claude.use('user'):null;return u?await u.isOwner():false;}catch(e){return false;}})());}
+async function route(){
+  const d=dec(location.hash.slice(1));
+  if(d){showInvite(d);return;}
+  $('#invite').hidden=true;$('#ownerbar').hidden=true;
+  const owner=await ownerCheck();
+  if(owner&&!dec(location.hash.slice(1))){$('#splash').hidden=true;$('#admin').hidden=false;startAdmin();if(window.__adminY){const y=window.__adminY;requestAnimationFrame(()=>window.scrollTo(0,y));}}
+  else{$('#splash').hidden=false;}
+}
+window.addEventListener('hashchange',route);
+$('#backAdmin').addEventListener('click',()=>{location.hash='';route();});
+
+/* ---------- manager ---------- */
+const LANGS=[['es','ES tú'],['esu','ES usted'],['esa','ES vos'],['en','EN']];
+const STATUS=[['pend','Sin respuesta'],['si','Sí, lo intenta'],['sif','Sí, solo Florida'],['sie','Sí, solo Europa'],['pensar','Lo va a pensar'],['no','Este año no'],['conf','Confirmado']];
+let db=null,guests=[],settings={whatsapp:'',inviteUrl:''},filter='all',started=false,dirty=false;
+const chains={};
+function queue(id,fn){chains[id]=(chains[id]||Promise.resolve()).then(fn).catch(e=>toast('No se pudo guardar: '+((e&&(e.message||e.code))||'error')));}
+function gref(id){return db.collection('guests').doc(id);}
+function save(g,patch){Object.assign(g,patch);queue(g.id,()=>gref(g.id).update(patch));}
+function payload(g){return {p:Number(g.people)||1,n:String(g.name||'').replace(/ (y|and) /g,' & '),l:g.lang||'es',f:g.florida?1:0,e:g.europa?1:0,xf:g.florida?(g.xf||[]):[],xe:g.europa?(g.xe||[]):[],m:g.msg||undefined,w:settings.whatsapp||undefined};}
+function linkFor(g){return (settings.inviteUrl||'').replace(/#.*$/,'')+'#'+enc(payload(g));}
+function waShare(g){const first=(g.name||'').split(/[ ,]/)[0];const l=linkFor(g);const txt={en:`Hi ${first}! I'm turning 40 and I want to celebrate with you. Here's your invitation: ${l}`,esu:`¡Hola ${first}! Cumplo 40 y quiero celebrarlo con usted. Aquí está su invitación: ${l}`,esa:`¡Hola ${first}! Cumplo 40 y quiero celebrarlo con vos. Acá está tu invitación: ${l}`}[g.lang]||`¡Hola ${first}! Cumplo 40 y quiero celebrarlo contigo. Aquí está tu invitación: ${l}`;return 'https://wa.me/?text='+encodeURIComponent(txt);}
+
+async function startAdmin(){
+  if(started){render();return;}started=true;
+  db=window.claude?await window.claude.use('db'):null;
+  if(!db){$('#list').replaceChildren(h('div',{class:'empty'},'No pude abrir la lista. Vuelve a cargar la página.'));return;}
+  db.collection('guests').onSnapshot(s=>{guests=s.docs.map(d=>Object.assign({id:d.id},d.data()));scheduleRender();},e=>toast('Error de lista: '+e.code));
+  db.doc('settings/main').onSnapshot(s=>{settings=Object.assign({whatsapp:'',inviteUrl:''},s.exists?s.data():{});
+    if(document.activeElement!==$('#setWa'))$('#setWa').value=settings.whatsapp||'';
+    if(document.activeElement!==$('#setUrl'))$('#setUrl').value=settings.inviteUrl||'';scheduleRender();});
+}
+function scheduleRender(){const a=document.activeElement;if(a&&$('#list').contains(a)&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){dirty=true;return;}render();}
+$('#list').addEventListener('focusout',()=>setTimeout(()=>{if(dirty){dirty=false;scheduleRender();}},0));
+
+function saveSettings(patch){Object.assign(settings,patch);queue('settings',()=>db.doc('settings/main').set(Object.assign({},settings)));toast('Ajustes guardados');}
+$('#setWa').addEventListener('change',e=>saveSettings({whatsapp:e.target.value.trim()}));
+$('#setUrl').addEventListener('change',e=>saveSettings({inviteUrl:e.target.value.trim()}));
+$('#toggleSettings').addEventListener('click',()=>{$('#settingsPanel').hidden=!$('#settingsPanel').hidden;});
+
+function render(){
+  const sorted=[...guests].sort((a,b)=>(a.sort||0)-(b.sort||0)||String(a.name).localeCompare(b.name));
+  const sum=(arr)=>arr.reduce((t,g)=>t+(Number(g.people)||0),0);
+  const F=sorted.filter(g=>g.florida),E=sorted.filter(g=>g.europa),B=sorted.filter(g=>g.florida&&g.europa);
+  const X=sorted.filter(g=>(g.florida&&(g.xf||[]).length)||(g.europa&&(g.xe||[]).some(k=>EXTRAS[k])));
+  const D=sorted.filter(g=>g.europa&&(g.xe||[]).some(k=>PLANS[k]));
+  const yesF=g=>['si','conf','sif'].includes(g.status),yesE=g=>['si','conf','sie'].includes(g.status);
+  $('#stats').replaceChildren(
+    h('div',{class:'stat fl'},h('b',null,sum(F)),h('small',null,`personas en Florida · ${F.length} invitaciones · ${sum(F.filter(yesF))} dicen sí`)),
+    h('div',{class:'stat eu'},h('b',null,sum(E)),h('small',null,`personas en Colonia · ${E.length} invitaciones · ${sum(E.filter(yesE))} dicen sí`)),
+    h('div',{class:'stat'},h('b',null,B.length),h('small',null,'invitaciones para ambas')),
+    h('div',{class:'stat gf'},h('b',null,X.length),h('small',null,'con algún detalle extra')),
+    h('div',{class:'stat eu'},h('b',null,sum(D)),h('small',null,`personas con días extra · ${D.length} invitaciones`)));
+  const tabs=[['all','Todos',sorted.length],['f','Florida',F.length],['e','Europa',E.length],['b','Ambas',B.length],['x','Con detalle',X.length],['none','Sin asignar',sorted.filter(g=>!g.florida&&!g.europa).length]];
+  $('#tabs').replaceChildren(...tabs.map(([k,l,n])=>h('button',{class:'btn tab',type:'button','aria-pressed':String(filter===k),onclick:()=>{filter=k;render();}},`${l} · ${n}`)));
+  const warn=$('#warnBox');
+  if(!settings.inviteUrl){warn.hidden=false;warn.textContent='Falta el enlace de esta página en Ajustes: sin él, los links de invitación no funcionan.';}
+  else if(!settings.whatsapp){warn.hidden=false;warn.textContent='Pon tu WhatsApp en Ajustes antes de enviar: así los invitados te responden con un toque.';}
+  else warn.hidden=true;
+  const show=sorted.filter(g=>filter==='all'||(filter==='f'&&g.florida)||(filter==='e'&&g.europa)||(filter==='b'&&g.florida&&g.europa)||(filter==='x'&&X.includes(g))||(filter==='none'&&!g.florida&&!g.europa));
+  $('#list').replaceChildren(...(show.length?show.map(row):[h('div',{class:'empty'},guests.length?'Nadie en este filtro.':'Aún no hay invitados. Agrega el primero abajo.')]));
+}
+
+function chips(g,side){
+  const key=side==='f'?'xf':'xe';const cur=g[key]||[];
+  return h('div',{class:'xrow'},h('span',{class:'tag '+side},side.toUpperCase()),
+    [...Object.entries(EXTRAS).filter(([,x])=>!x.only||x.only===side),...(side==='e'?Object.entries(PLANS):[])].map(([k,x])=>h('button',{class:'chip',type:'button',title:x.label,'aria-pressed':String(cur.includes(k)),
+      onclick:()=>{const now=cur.includes(k)?cur.filter(v=>v!==k):[...cur,k];save(g,{[key]:now});render();}},(x.codes&&x.codes[side])||x.code)));
+}
+function row(g){
+  const id='g_'+g.id;
+  let delArm=false;
+  const delBtn=h('button',{class:'btn danger',type:'button',onclick:()=>{if(!delArm){delArm=true;delBtn.textContent='¿Seguro? Toca de nuevo para eliminar';setTimeout(()=>{delArm=false;delBtn.textContent='Eliminar invitado';},4000);return;}queue(g.id,()=>gref(g.id).delete());toast('Invitado eliminado');}},'Eliminar invitado');
+  const link=settings.inviteUrl?linkFor(g):'';
+  const linkInput=h('input',{class:'field linkbox',id:id+'_link',readonly:true,value:link||'Falta el enlace de la página en Ajustes'});
+  const copy=()=>{if(!link){toast('Primero pon el enlace de la página en Ajustes');return;}const fb=()=>{linkInput.closest('details').open=true;linkInput.select();toast('Selecciona y copia el enlace');};try{navigator.clipboard.writeText(link).then(()=>toast('Link copiado')).catch(fb);}catch(e){fb();}};
+  const noEvent=!g.florida&&!g.europa;
+  return h('article',{class:'g'},
+    h('div',null,
+      h('input',{class:'name',id:id+'_name',value:g.name||'','aria-label':'Nombre',onchange:e=>save(g,{name:e.target.value.trim()})}),
+      h('div',{class:'sub'},
+        h('input',{class:'origin',id:id+'_org',value:g.origin||'',placeholder:'De dónde','aria-label':'De dónde',onchange:e=>save(g,{origin:e.target.value.trim()})}),
+        h('input',{class:'ppl',id:id+'_ppl',type:'number',min:'1',value:g.people||1,'aria-label':'Personas',onchange:e=>save(g,{people:Math.max(1,parseInt(e.target.value)||1)})}),'pers.',
+        h('select',{id:id+'_lang','aria-label':'Idioma',onchange:e=>save(g,{lang:e.target.value})},LANGS.map(([v,l])=>h('option',{value:v,selected:(g.lang||'es')===v},l))))),
+    h('div',null,h('div',{class:'lbl'},'Celebración'),
+      h('div',{class:'seg'},
+        h('button',{class:'f',type:'button','aria-pressed':String(!!g.florida),onclick:()=>{save(g,{florida:!g.florida});render();}},'Florida'),
+        h('button',{class:'e',type:'button','aria-pressed':String(!!g.europa),onclick:()=>{save(g,{europa:!g.europa});render();}},'Europa'))),
+    h('div',null,h('div',{class:'lbl'},'Detalle extra'),
+      noEvent?h('div',{class:'none'},'Elige primero una celebración'):null,
+      g.florida?chips(g,'f'):null, g.europa?chips(g,'e'):null),
+    h('div',null,h('div',{class:'lbl'},'Respuesta'),
+      h('select',{class:'status',id:id+'_st','aria-label':'Respuesta',onchange:e=>{save(g,{status:e.target.value});render();}},STATUS.map(([v,l])=>h('option',{value:v,selected:(g.status||'pend')===v},l))),
+      h('div',{class:'acts'},
+        h('button',{class:'btn',type:'button',onclick:copy,disabled:noEvent},'Copiar link'),
+        noEvent||!link?null:h('a',{class:'btn',href:waShare(g),target:'_blank',rel:'noopener'},'WhatsApp'),
+        noEvent?null:h('button',{class:'btn',type:'button',onclick:()=>{window.__adminY=window.scrollY;location.hash=enc(payload(g));}},'Ver'))),
+    h('details',{class:'more'},h('summary',null,(g.msg||g.internal)?'Mensaje y notas ✎':'Mensaje personal, notas, enlace'),
+      h('div',{class:'more-grid'},
+        h('label',null,h('div',{class:'lbl'},'Mensaje personal (lo ve el invitado)'),h('textarea',{id:id+'_msg',onchange:e=>save(g,{msg:e.target.value.trim()})},g.msg||'')),
+        h('label',null,h('div',{class:'lbl'},'Nota interna (solo tú)'),h('textarea',{id:id+'_int',onchange:e=>save(g,{internal:e.target.value.trim()})},g.internal||'')),
+        h('label',{style:'grid-column:1/-1'},h('div',{class:'lbl'},'Enlace de su invitación'),linkInput),
+        h('div',null,delBtn))));
+}
+
+$('#addForm').addEventListener('submit',e=>{e.preventDefault();if(!db)return;
+  const name=$('#addName').value.trim();if(!name)return;
+  const doc={name,origin:$('#addOrigin').value.trim(),people:Math.max(1,parseInt($('#addPpl').value)||1),lang:$('#addLang').value,florida:$('#addF').checked,europa:$('#addE').checked,xf:[],xe:[],status:'pend',msg:'',internal:'',sort:Date.now()};
+  db.collection('guests').add(doc).then(()=>{toast('Invitado agregado');e.target.reset();$('#addPpl').value=1;}).catch(err=>toast('No se pudo agregar: '+(err.message||err.code)));});
+
+route();
+</script>
