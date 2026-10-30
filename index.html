@@ -142,6 +142,32 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .rsvp-opts{display:flex;flex-wrap:wrap;gap:10px}
 .rsvp-opts a,.rsvp-opts span{display:inline-block;padding:11px 16px;border-radius:12px;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:600}
 .rsvp-opts a:hover{background:var(--ink);color:var(--ground)}
+.rsvp-opts button{padding:11px 16px;border-radius:12px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.rsvp-opts button:hover{background:var(--ink);color:var(--ground)}
+.rsvp-opts button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.rsvp-opts button:disabled{opacity:.6;cursor:wait}
+.rsvp-ok{background:var(--rhine-soft,#E3F1EA);border-radius:12px;padding:12px 14px;color:var(--ink);font-weight:600}
+.rsvp-ok small{display:block;font-weight:400;color:var(--muted);margin-top:2px}
+.rsvp-err{color:#B3261E;font-weight:600}
+.rsvp-note{display:flex;flex-direction:column;gap:8px}
+.rsvp-note textarea{font:inherit}
+.rsvp-note .btn{align-self:flex-start}
+.resp{display:flex;flex-direction:column;gap:12px}
+.resp-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.resp-cnt{display:flex;flex-wrap:wrap;gap:8px}
+.resp-cnt span{background:var(--ground);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px}
+.resp-cnt b{font-variant-numeric:tabular-nums}
+.resp-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.resp-tbl th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.resp-tbl td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.resp-tbl td.when{white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums}
+.resp-wrap{overflow-x:auto}
+.ans{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.ans.si,.ans.sif,.ans.sie,.ans.conf{background:var(--rhine);color:var(--rhine-ink,#fff)}
+.ans.pensar{background:var(--sun-soft);color:var(--ink)}
+.ans.no{background:var(--line);color:var(--ink)}
+.gresp{font-size:13px;margin-top:6px;color:var(--muted)}
+.gresp q{display:block;color:var(--ink);font-style:italic;margin-top:2px}
 .sign{font-family:var(--display);font-size:24px;font-weight:600}
 .fine{font-size:13px;color:var(--muted)}
 .ownerbar{position:fixed;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(16px + env(safe-area-inset-bottom, 0px));z-index:5}
@@ -224,12 +250,13 @@ textarea{min-height:64px;resize:vertical}
   <div id="settingsPanel" class="panel" hidden>
     <h2>Ajustes</h2>
     <div class="form">
-      <label>WhatsApp de Nando (para las respuestas, con código de país)<input class="field" id="setWa" placeholder="Ej. 5491100000000" inputmode="tel"></label>
+      <label hidden>WhatsApp<input class="field" id="setWa"></label>
       <label>Enlace de esta página<input class="field" id="setUrl" placeholder="https://claude.ai/..."></label>
     </div>
-    <p class="fine">Los cambios aquí se aplican a los enlaces que copies desde ahora. Si cambias el WhatsApp, vuelve a enviar los enlaces ya enviados solo si quieres que respondan al número nuevo.</p>
+    <p class="fine">Los cambios aquí se aplican a los enlaces que copies desde ahora.</p>
   </div>
   <div id="warnBox" class="warn" hidden></div>
+  <section class="panel resp" id="respBox"></section>
   <div class="stats" id="stats"></div>
   <div class="bar" id="tabs"></div>
   <div class="legend"><span>Detalles extra (solo los ve quien los tiene):</span><span><b>HOSP ORL</b> hospedaje en Orlando</span><span><b>HOSP COL</b> hospedaje en Colonia</span><span><b>COMIDA $50</b> bono de 50 USD diarios en Europa</span><span><b>COM</b> bono de comida</span><span><b>UNI</b> entrada a Universal el 12 de mayo</span><span><b>DIS</b> entrada al día Disney</span><span><b>HOSP AMS</b> hospedaje en Ámsterdam, 2 noches</span><span><b>VISA</b> documentos de apoyo para la visa</span><span><b>+DÍAS</b> Valle del Rin, Ámsterdam, city tour y Phantasialand</span><span><b>BÉLGICA</b> Gante y Brujas, dos días al final</span></div>
@@ -326,6 +353,7 @@ const T={
   gift:'Un detalle para ti',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerte por estar.',giftFl:'En Florida',giftEu:'En Europa',giftDays:'Además, te invito a quedarte unos días más con nosotros: los ves aquí abajo.',seeDays:'Ver los días extra →',giftHint:'Hay algo preparado exclusivamente para ti →',
   rsvpT:'¿Lo ves posible?',rsvpP:'Todavía no te pido confirmación, solo una idea sincera. Cuéntame antes del 30 de noviembre.',
   opts:['Sí, lo intento','Lo voy a pensar','Este año no, nos vemos en los 41'],optsBoth:['Sí, a las dos','Solo a Florida','Solo a Colonia','Lo voy a pensar','Este año no, nos vemos en los 41'],bothNote:'Si solo puedes ir a una, perfecto: elige la que te quede mejor.',
+  sent:'¡Gracias! Tu respuesta ya le llegó a Nando.',change:'Puedes cambiarla cuando quieras.',notePh:'Si quieres, déjame un mensaje (opcional)',noteBtn:'Enviar mensaje',noteOk:'Mensaje enviado. ¡Gracias!',err:'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.',mine:'Tu respuesta',prev:'Vista previa: esta respuesta no se guarda.',
   waMsg:o=>`Hola Nando, sobre tu cumpleaños 40: ${o}`,noWa:'Respóndele a Nando por WhatsApp con una de estas opciones:',
   sign:'Con cariño, Nando',fine:'Esta invitación es personal.',colCap:'Colonia, a los 23'},
  en:{hi:n=>`Hi, ${n}`,both:'I’m turning 40 this year and celebrating twice. I’d love for you to be at both.',one:'I’m turning 40 this year and I’d love to celebrate it with you.',
@@ -335,13 +363,14 @@ const T={
   gift:'Something just for you',giftIntro:'This is on me. It’s my way of saying thank you for being there.',giftFl:'In Florida',giftEu:'In Europe',giftDays:'I’d also love for you to stay a few more days with us: see them below.',seeDays:'See the extra days →',giftHint:'There’s something exclusively for you →',
   rsvpT:'Do you see it as possible?',rsvpP:'No firm answer yet, just an honest idea. Let me know by November 30.',
   opts:['Yes, I’ll try','Let me think about it','Not this year, see you at 41'],optsBoth:['Yes, both','Only Florida','Only Cologne','Let me think about it','Not this year, see you at 41'],bothNote:'If you can only make one, that’s perfectly fine: pick the one that works best for you.',
+  sent:'Thank you! Nando got your answer.',change:'You can change it anytime.',notePh:'Want to leave me a message? (optional)',noteBtn:'Send message',noteOk:'Message sent. Thank you!',err:'It couldn’t be sent. Check your connection and try again.',mine:'Your answer',prev:'Preview: this answer is not saved.',
   waMsg:o=>`Hi Nando, about your 40th: ${o}`,noWa:'Reply to Nando on WhatsApp with one of these:',
   sign:'With love, Nando',fine:'This invitation is personal.',colCap:'Cologne, at 23'}
 };
-T.esu=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuviera en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con usted.',tabs:Object.assign({},T.es.tabs,{gift:'Para usted'}),gift:'Un detalle para usted',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerle por estar.',giftDays:'Además, le invito a quedarse unos días más con nosotros: los ve aquí abajo.',giftHint:'Hay algo preparado exclusivamente para usted →',rsvpT:'¿Lo ve posible?',rsvpP:'Todavía no le pido confirmación, solo una idea sincera. Cuénteme antes del 30 de noviembre.',noWa:'Respóndale a Nando por WhatsApp con una de estas opciones:',bothNote:'Si solo puede ir a una, perfecto: elija la que le quede mejor.'});
-T.esa=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estés en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con vos.',tabs:Object.assign({},T.es.tabs,{gift:'Para vos'}),gift:'Un detalle para vos',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerte por estar.',giftDays:'Además, te invito a quedarte unos días más con nosotros: los ves acá abajo.',giftHint:'Hay algo preparado exclusivamente para vos →',rsvpP:'Todavía no te pido confirmación, solo una idea sincera. Contame antes del 30 de noviembre.',noWa:'Respondele a Nando por WhatsApp con una de estas opciones:',bothNote:'Si solo podés ir a una, perfecto: elegí la que te quede mejor.'});
+T.esu=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuviera en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con usted.',tabs:Object.assign({},T.es.tabs,{gift:'Para usted'}),gift:'Un detalle para usted',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerle por estar.',giftDays:'Además, le invito a quedarse unos días más con nosotros: los ve aquí abajo.',giftHint:'Hay algo preparado exclusivamente para usted →',rsvpT:'¿Lo ve posible?',rsvpP:'Todavía no le pido confirmación, solo una idea sincera. Cuénteme antes del 30 de noviembre.',noWa:'Respóndale a Nando por WhatsApp con una de estas opciones:',sent:'¡Gracias! Su respuesta ya le llegó a Nando.',change:'Puede cambiarla cuando quiera.',notePh:'Si quiere, déjeme un mensaje (opcional)',err:'No se pudo enviar. Revise su conexión e inténtelo de nuevo.',mine:'Su respuesta',bothNote:'Si solo puede ir a una, perfecto: elija la que le quede mejor.'});
+T.esa=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estés en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con vos.',tabs:Object.assign({},T.es.tabs,{gift:'Para vos'}),gift:'Un detalle para vos',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerte por estar.',giftDays:'Además, te invito a quedarte unos días más con nosotros: los ves acá abajo.',giftHint:'Hay algo preparado exclusivamente para vos →',rsvpP:'Todavía no te pido confirmación, solo una idea sincera. Contame antes del 30 de noviembre.',noWa:'Respondele a Nando por WhatsApp con una de estas opciones:',change:'Podés cambiarla cuando quieras.',notePh:'Si querés, dejame un mensaje (opcional)',err:'No se pudo enviar. Revisá tu conexión y probá de nuevo.',bothNote:'Si solo podés ir a una, perfecto: elegí la que te quede mejor.'});
 
-T.pl={both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuvieran en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con ustedes.',gift:'Un detalle para ustedes',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerles por estar.',giftDays:'Además, los invito a quedarse unos días más con nosotros: los ven aquí abajo.',giftHint:'Hay algo preparado exclusivamente para ustedes →',rsvpT:'¿Lo ven posible?',rsvpP:'Todavía no les pido confirmación, solo una idea sincera. Cuéntenme antes del 30 de noviembre.',bothNote:'Si solo pueden ir a una, perfecto: elijan la que les quede mejor.',noWa:'Respóndanle a Nando por WhatsApp con una de estas opciones:'};
+T.pl={both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuvieran en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con ustedes.',gift:'Un detalle para ustedes',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerles por estar.',giftDays:'Además, los invito a quedarse unos días más con nosotros: los ven aquí abajo.',giftHint:'Hay algo preparado exclusivamente para ustedes →',rsvpT:'¿Lo ven posible?',rsvpP:'Todavía no les pido confirmación, solo una idea sincera. Cuéntenme antes del 30 de noviembre.',bothNote:'Si solo pueden ir a una, perfecto: elijan la que les quede mejor.',noWa:'Respóndanle a Nando por WhatsApp con una de estas opciones:',sent:'¡Gracias! Su respuesta ya le llegó a Nando.',change:'Pueden cambiarla cuando quieran.',notePh:'Si quieren, déjenme un mensaje (opcional)',err:'No se pudo enviar. Revisen su conexión e inténtenlo de nuevo.',mine:'Su respuesta'};
 DAYS.pl={cov:(x,f)=>{const p=[];if(x)p.push(`el alojamiento en ${x}`);if(f)p.push('un bono de comida de 50 USD por día');return `Si se animan a venir, ${p.join((x&&x.includes(' y '))?', y ':' y ')} ${p.length>1?'corren':'corre'} por mi cuenta. `;},rest:'A todo lo demás pueden sumarse o no, como prefieran: al lado de cada plan está lo que cuesta, para que lo organicen con calma.',notInc:'A cada plan pueden sumarse o no, como prefieran: al lado de cada uno está lo que cuesta, para que lo organicen con calma.'};
 function polaroid(src,cap,solo){return h('figure',{class:'polaroid'+(solo?' solo':'')},h('img',{src,alt:cap||'Foto de Nando',loading:'lazy',decoding:'async'}),cap?h('figcaption',null,cap):null);}
 function confetti(){const box=h('div',{class:'confetti','aria-hidden':'true'});const cols=['var(--sun)','var(--rhine)','var(--gift)'];let seed=7;const r=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
@@ -374,9 +403,7 @@ function showInvite(d){
       c.dress?h('div',{class:'dress'},h('b',null,c.dress[0]),h('span',null,c.dress[1]),h('i',{'aria-hidden':'true'},['var(--sun)','var(--rhine)','var(--gift)','#F2B8C6','#F5D76E'].map(col=>h('em',{style:'background:'+col})))):null,
       ((kind==='fl'&&xf.length)||(kind==='eu'&&xeg.length))?hint():null,h('div',{class:'tbc'},c.tbc)));};
   const tile=(kind)=>{const c=t[kind];return h('button',{class:'tile '+kind,type:'button',onclick:()=>go(kind)},svg(kind),h('small',null,c.kick),h('b',null,c.title),h('span',{class:'go'},t.see));};
-  const rsvp=h('section',{class:'rsvp'},h('h2',null,t.rsvpT),h('p',null,t.rsvpP),both?h('p',null,t.bothNote):null,wa?null:h('p',null,t.noWa),
-    h('div',{class:'rsvp-opts'},(both?t.optsBoth:t.opts).map(o=>wa?h('a',{href:`https://wa.me/${wa}?text=${encodeURIComponent(t.waMsg(o))}`,target:'_blank',rel:'noopener'},o):h('span',null,o))),
-    wa?h('p',{class:'fine'},'WhatsApp: +'+wa):null);
+  const rsvp=rsvpBox(d,t,both);
   const tripBlock=(kind)=>{const x=tr[kind];return h('section',{class:'panel-inv '+kind},
     h('div',{class:'kicker'},x.head),
     h('div',{class:'wx'},h('div',{class:'t'},x.t,h('small',null,' / '+x.lo)),h('p',null,x.wx)),
@@ -423,6 +450,42 @@ function showInvite(d){
   ownerCheck().then(o=>{$('#ownerbar').hidden=!o;});
 }
 
+
+/* ---------- RSVP: answers go to Nando's response store, never through WhatsApp ---------- */
+const HOOK='https://hook.us2.make.com/ftf86a0e0hk32qcyqsphyc5zmtihbufa';
+const LIVE=/(^|\.)elcumpledefer\.com$/.test(location.hostname);
+const normName=n=>String(n||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ').trim();
+const rsvpKey=d=>d.k?String(d.k):'n:'+normName(d.n);
+function rsvpBox(d,t,both){
+  const codes=both?['si','sif','sie','pensar','no']:['si','pensar','no'];
+  const labels=both?t.optsBoth:t.opts;
+  const store='rsvp:'+rsvpKey(d);
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(store)||'null');}catch(e){}
+  const inv=d.f&&d.e?'Ambas':d.f?'Florida':'Europa';
+  const status=h('div',{'aria-live':'polite'});
+  const noteArea=h('textarea',{rows:3,placeholder:t.notePh,'aria-label':t.notePh},saved&&saved.note||'');
+  const noteBtn=h('button',{class:'btn',type:'button'},t.noteBtn);
+  const noteWrap=h('div',{class:'rsvp-note',hidden:!saved},noteArea,noteBtn);
+  let cur=saved&&saved.answer||'';
+  const btns=codes.map((c,i)=>h('button',{type:'button','aria-pressed':String(cur===c),onclick:()=>send(c,null)},labels[i]));
+  const showOk=(extra)=>{const lab=labels[codes.indexOf(cur)]||'';status.replaceChildren(h('div',{class:'rsvp-ok'},extra||t.sent,h('small',null,`${t.mine}: ${lab} · ${t.change}`),LIVE?null:h('small',null,t.prev)));};
+  if(saved)showOk();
+  async function send(code,note){
+    const prev=cur; cur=code||cur; btns.forEach((b,i)=>b.setAttribute('aria-pressed',String(codes[i]===cur)));
+    const body={k:rsvpKey(d),gid:d.k||'',name:d.n||'',answer:cur,note:(note!=null?note:(saved&&saved.note)||''),people:String(d.p||1),inv};
+    btns.forEach(b=>b.disabled=true);noteBtn.disabled=true;
+    let ok=true;
+    if(LIVE){try{const r=await fetch(HOOK,{method:'POST',body:new URLSearchParams(body)});ok=r.ok;}catch(e){ok=false;}}
+    btns.forEach(b=>b.disabled=false);noteBtn.disabled=false;
+    if(!ok){cur=prev;btns.forEach((b,i)=>b.setAttribute('aria-pressed',String(codes[i]===cur)));status.replaceChildren(h('p',{class:'rsvp-err'},t.err));return;}
+    saved={answer:cur,note:body.note};try{localStorage.setItem(store,JSON.stringify(saved));}catch(e){}
+    noteWrap.hidden=false; showOk(note!=null?t.noteOk:null);
+  }
+  noteBtn.addEventListener('click',()=>{if(!cur)return;send(null,noteArea.value.trim());});
+  return h('section',{class:'rsvp'},h('h2',null,t.rsvpT),h('p',null,t.rsvpP),both?h('p',null,t.bothNote):null,
+    h('div',{class:'rsvp-opts'},btns),status,noteWrap);
+}
+
 /* ---------- routing ---------- */
 let ownerP;
 function ownerCheck(){return ownerP||(ownerP=(async()=>{try{const u=window.claude&&window.claude.use?await window.claude.use('user'):null;return u?await u.isOwner():false;}catch(e){return false;}})());}
@@ -445,7 +508,7 @@ const chains={};
 function queue(id,fn){chains[id]=(chains[id]||Promise.resolve()).then(fn).catch(e=>toast('No se pudo guardar: '+((e&&(e.message||e.code))||'error')));}
 function gref(id){return db.collection('guests').doc(id);}
 function save(g,patch){Object.assign(g,patch);queue(g.id,()=>gref(g.id).update(patch));}
-function payload(g){return {p:Number(g.people)||1,n:String(g.name||'').replace(/ (y|and) /g,' & '),l:g.lang||'es',f:g.florida?1:0,e:g.europa?1:0,xf:g.florida?(g.xf||[]):[],xe:g.europa?(g.xe||[]):[],m:g.msg||undefined,w:settings.whatsapp||undefined};}
+function payload(g){return {p:Number(g.people)||1,n:String(g.name||'').replace(/ (y|and) /g,' & '),l:g.lang||'es',f:g.florida?1:0,e:g.europa?1:0,xf:g.florida?(g.xf||[]):[],xe:g.europa?(g.xe||[]):[],m:g.msg||undefined,k:g.id};}
 function linkFor(g){return (settings.inviteUrl||'').replace(/#.*$/,'')+'#'+enc(payload(g));}
 function waShare(g){const first=(g.name||'').split(/[ ,]/)[0];const l=linkFor(g);const txt={en:`Hi ${first}! I'm turning 40 and I want to celebrate with you. Here's your invitation: ${l}`,esu:`¡Hola ${first}! Cumplo 40 y quiero celebrarlo con usted. Aquí está su invitación: ${l}`,esa:`¡Hola ${first}! Cumplo 40 y quiero celebrarlo con vos. Acá está tu invitación: ${l}`}[g.lang]||`¡Hola ${first}! Cumplo 40 y quiero celebrarlo contigo. Aquí está tu invitación: ${l}`;return 'https://wa.me/?text='+encodeURIComponent(txt);}
 
@@ -453,7 +516,8 @@ async function startAdmin(){
   if(started){render();return;}started=true;
   db=window.claude?await window.claude.use('db'):null;
   if(!db){$('#list').replaceChildren(h('div',{class:'empty'},'No pude abrir la lista. Vuelve a cargar la página.'));return;}
-  db.collection('guests').onSnapshot(s=>{guests=s.docs.map(d=>Object.assign({id:d.id},d.data()));scheduleRender();},e=>toast('Error de lista: '+e.code));
+  db.collection('guests').onSnapshot(s=>{guests=s.docs.map(d=>Object.assign({id:d.id},d.data()));syncStatus();scheduleRender();},e=>toast('Error de lista: '+e.code));
+  loadResp();
   db.doc('settings/main').onSnapshot(s=>{settings=Object.assign({whatsapp:'',inviteUrl:''},s.exists?s.data():{});
     if(document.activeElement!==$('#setWa'))$('#setWa').value=settings.whatsapp||'';
     if(document.activeElement!==$('#setUrl'))$('#setUrl').value=settings.inviteUrl||'';scheduleRender();});
@@ -479,13 +543,13 @@ function render(){
     h('div',{class:'stat'},h('b',null,B.length),h('small',null,'invitaciones para ambas')),
     h('div',{class:'stat gf'},h('b',null,X.length),h('small',null,'con algún detalle extra')),
     h('div',{class:'stat eu'},h('b',null,sum(D)),h('small',null,`personas con días extra · ${D.length} invitaciones`)));
-  const tabs=[['all','Todos',sorted.length],['f','Florida',F.length],['e','Europa',E.length],['b','Ambas',B.length],['x','Con detalle',X.length],['none','Sin asignar',sorted.filter(g=>!g.florida&&!g.europa).length]];
+  const tabs=[['all','Todos',sorted.length],['f','Florida',F.length],['e','Europa',E.length],['b','Ambas',B.length],['x','Con detalle',X.length],['none','Sin asignar',sorted.filter(g=>!g.florida&&!g.europa).length],['r','Respondieron',sorted.filter(g=>respFor(g)).length],['p','Sin responder',sorted.filter(g=>(g.florida||g.europa)&&!respFor(g)).length]];
   $('#tabs').replaceChildren(...tabs.map(([k,l,n])=>h('button',{class:'btn tab',type:'button','aria-pressed':String(filter===k),onclick:()=>{filter=k;render();}},`${l} · ${n}`)));
   const warn=$('#warnBox');
   if(!settings.inviteUrl){warn.hidden=false;warn.textContent='Falta el enlace de esta página en Ajustes: sin él, los links de invitación no funcionan.';}
-  else if(!settings.whatsapp){warn.hidden=false;warn.textContent='Pon tu WhatsApp en Ajustes antes de enviar: así los invitados te responden con un toque.';}
   else warn.hidden=true;
-  const show=sorted.filter(g=>filter==='all'||(filter==='f'&&g.florida)||(filter==='e'&&g.europa)||(filter==='b'&&g.florida&&g.europa)||(filter==='x'&&X.includes(g))||(filter==='none'&&!g.florida&&!g.europa));
+  const show=sorted.filter(g=>filter==='all'||(filter==='f'&&g.florida)||(filter==='e'&&g.europa)||(filter==='b'&&g.florida&&g.europa)||(filter==='x'&&X.includes(g))||(filter==='none'&&!g.florida&&!g.europa)||(filter==='r'&&respFor(g))||(filter==='p'&&(g.florida||g.europa)&&!respFor(g)));
+  renderResp(sorted);
   $('#list').replaceChildren(...(show.length?show.map(row):[h('div',{class:'empty'},guests.length?'Nadie en este filtro.':'Aún no hay invitados. Agrega el primero abajo.')]));
 }
 
@@ -519,6 +583,7 @@ function row(g){
       g.florida?chips(g,'f'):null, g.europa?chips(g,'e'):null),
     h('div',null,h('div',{class:'lbl'},'Respuesta'),
       h('select',{class:'status',id:id+'_st','aria-label':'Respuesta',onchange:e=>{save(g,{status:e.target.value});render();}},STATUS.map(([v,l])=>h('option',{value:v,selected:(g.status||'pend')===v},l))),
+      gResp(g),
       h('div',{class:'acts'},
         h('button',{class:'btn',type:'button',onclick:copy,disabled:noEvent},'Copiar link'),
         noEvent||!link?null:h('a',{class:'btn',href:waShare(g),target:'_blank',rel:'noopener'},'WhatsApp'),
@@ -529,6 +594,64 @@ function row(g){
         h('label',null,h('div',{class:'lbl'},'Nota interna (solo tú)'),h('textarea',{id:id+'_int',onchange:e=>save(g,{internal:e.target.value.trim()})},g.internal||'')),
         h('label',{style:'grid-column:1/-1'},h('div',{class:'lbl'},'Enlace de su invitación'),linkInput),
         h('div',null,delBtn))));
+}
+
+
+/* ---------- responses (read from Nando's Make store through his connector) ---------- */
+const RESP_STORE=188462;
+let resp=null,respErr='',respAt=0,respBusy=false;
+function respFor(g){if(!resp)return null;return resp[g.id]||resp['n:'+normName(payload(g).n)]||null;}
+const ansLabel=c=>(STATUS.find(([v])=>v===c)||[c,c])[1];
+async function loadResp(){
+  if(respBusy)return;respBusy=true;respErr='';renderResp();
+  try{
+    const mcp=window.claude?await window.claude.use('mcp'):null;
+    if(!mcp){respErr='No pude conectar con Make desde esta vista.';}
+    else{
+      const r=await mcp.callTool('Make','data-store-records_list',{dataStoreId:RESP_STORE,limit:1000},{cache:false});
+      let p=r.payload;if(typeof p==='string'){try{p=JSON.parse(p);}catch(e){}}
+      const arr=Array.isArray(p)?p:(p&&(p.records||p.data||p.items))||[];
+      const m={};for(const x of arr){if(x&&x.key&&x.data&&x.key!=='prueba')m[x.key]=Object.assign({key:x.key},x.data);}
+      resp=m;respAt=Date.now();syncStatus();
+    }
+  }catch(e){
+    const c=e&&e.code;
+    respErr=c==='server_not_connected'?'Conecta Make en claude.ai → Ajustes → Conectores para ver las respuestas.'
+      :c==='needs_reauth'?'Vuelve a conectar Make en claude.ai → Ajustes → Conectores.'
+      :(c==='not_in_manifest'||c==='approval_required')?'Falta tu permiso para leer las respuestas desde Make. Toca “Actualizar” y acepta.'
+      :'No pude leer las respuestas ahora. Toca “Actualizar” en un momento.';
+  }
+  respBusy=false;render();
+}
+function syncStatus(){
+  if(!resp||!db)return;
+  for(const g of guests){const r=respFor(g);if(r&&r.answer&&g.status!=='conf'&&g.status!==r.answer)save(g,{status:r.answer});}
+}
+function gResp(g){const r=respFor(g);if(!r)return null;
+  return h('div',{class:'gresp'},h('span',{class:'ans '+r.answer},ansLabel(r.answer)),' ',r.ts||'',r.note?h('q',null,r.note):null);}
+function renderResp(sorted){
+  const box=$('#respBox');if(!box)return;sorted=sorted||[...guests];
+  const invited=sorted.filter(g=>g.florida||g.europa);
+  const rows=Object.values(resp||{}).sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
+  const byKey=new Map();for(const g of sorted){byKey.set(g.id,g);byKey.set('n:'+normName(payload(g).n),g);}
+  const cnt=k=>rows.filter(r=>r.answer===k).length;
+  const pend=invited.filter(g=>!respFor(g)).length;
+  const upd=h('button',{class:'btn',type:'button',disabled:respBusy,onclick:loadResp},respBusy?'Cargando…':'Actualizar');
+  box.replaceChildren(
+    h('div',{class:'resp-head'},h('h2',null,'Respuestas'),h('div',{class:'bar'},respAt?h('span',{class:'fine'},'Actualizado '+new Date(respAt).toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'})):null,upd)),
+    respErr?h('div',{class:'warn'},respErr):null,
+    resp?h('div',{class:'resp-cnt'},
+      h('span',null,h('b',null,rows.length),' respondieron'),
+      h('span',null,h('b',null,cnt('si')),' sí'),
+      h('span',null,h('b',null,cnt('sif')),' solo Florida'),
+      h('span',null,h('b',null,cnt('sie')),' solo Colonia'),
+      h('span',null,h('b',null,cnt('pensar')),' lo van a pensar'),
+      h('span',null,h('b',null,cnt('no')),' este año no'),
+      h('span',null,h('b',null,pend),' sin responder')):null,
+    resp?(rows.length?h('div',{class:'resp-wrap'},h('table',{class:'resp-tbl'},
+      h('thead',null,h('tr',null,h('th',null,'Invitado'),h('th',null,'Respuesta'),h('th',null,'Mensaje'),h('th',null,'Cuándo'))),
+      h('tbody',null,rows.map(r=>{const g=byKey.get(r.key);return h('tr',null,h('td',null,(g&&g.name)||r.name||r.key),h('td',null,h('span',{class:'ans '+r.answer},ansLabel(r.answer))),h('td',null,r.note||''),h('td',{class:'when'},r.ts||''));}))))
+      :h('p',{class:'fine'},'Todavía nadie ha respondido. Las respuestas aparecen aquí solas; nadie ve cuándo las revisas.')):null);
 }
 
 $('#addForm').addEventListener('submit',e=>{e.preventDefault();if(!db)return;
