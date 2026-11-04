@@ -169,6 +169,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .gresp{font-size:13px;margin-top:6px;color:var(--muted)}
 .gresp q{display:block;color:var(--ink);font-style:italic;margin-top:2px}
 .sign{font-family:var(--display);font-size:24px;font-weight:600}
+.kids{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.kids h2{font-size:clamp(26px,6vw,34px);font-weight:800;letter-spacing:-.01em}
+.kids p{margin:0;font-size:17px;max-width:34em}
+.kids-photos{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;align-items:center;padding:6px 4px 10px}
+.kids-photos figure{margin:0;background:#fff;padding:7px 7px 9px;border-radius:4px;box-shadow:0 6px 18px rgba(20,30,50,.16)}
+.kids-photos figure:first-child{transform:rotate(-2deg)}.kids-photos figure:last-child{transform:rotate(3deg)}
+.kids-photos img{display:block;width:100%;height:auto;border-radius:2px}
+.kids .from{font-family:var(--display);font-size:20px;font-weight:600}
+@media (max-width:420px){.kids-photos{grid-template-columns:1fr 1fr}.kids-photos figure:first-child{grid-column:1/-1}.kids-photos figure:last-child{grid-column:1/-1;width:70%;justify-self:center}}
 .fine{font-size:13px;color:var(--muted)}
 .ownerbar{position:fixed;right:max(16px, env(safe-area-inset-right, 0px));bottom:calc(16px + env(safe-area-inset-bottom, 0px));z-index:5}
 
@@ -372,6 +381,19 @@ T.esa=Object.assign({},T.es,{both:'Este año cumplo 40 y lo celebro dos veces. M
 
 T.pl={both:'Este año cumplo 40 y lo celebro dos veces. Me encantaría que estuvieran en las dos.',one:'Este año cumplo 40 y me encantaría celebrarlo con ustedes.',gift:'Un detalle para ustedes',giftIntro:'Esto corre por mi cuenta. Es mi forma de agradecerles por estar.',giftDays:'Además, los invito a quedarse unos días más con nosotros: los ven aquí abajo.',giftHint:'Hay algo preparado exclusivamente para ustedes →',rsvpT:'¿Lo ven posible?',rsvpP:'Todavía no les pido confirmación, solo una idea sincera. Cuéntenme antes del 30 de noviembre.',bothNote:'Si solo pueden ir a una, perfecto: elijan la que les quede mejor.',noWa:'Respóndanle a Nando por WhatsApp con una de estas opciones:',sent:'¡Gracias! Su respuesta ya le llegó a Nando.',change:'Pueden cambiarla cuando quieran.',notePh:'Si quieren, déjenme un mensaje (opcional)',err:'No se pudo enviar. Revisen su conexión e inténtenlo de nuevo.',mine:'Su respuesta'};
 DAYS.pl={cov:(x,f)=>{const p=[];if(x)p.push(`el alojamiento en ${x}`);if(f)p.push('un bono de comida de 50 USD por día');return `Si se animan a venir, ${p.join((x&&x.includes(' y '))?', y ':' y ')} ${p.length>1?'corren':'corre'} por mi cuenta. `;},rest:'A todo lo demás pueden sumarse o no, como prefieran: al lado de cada plan está lo que cuesta, para que lo organicen con calma.',notInc:'A cada plan pueden sumarse o no, como prefieran: al lado de cada uno está lo que cuesta, para que lo organicen con calma.'};
+
+/* Intro from Måns and Lovisa's kids — only for invitations marked "ki" (Mamá, Javier & Cat) */
+const KIDS={
+ es:{kick:'Un mensaje desde Suecia',title:'¡Hola! Somos Kerstin y Olle',p:'Somos los hijos de Måns y Lovisa. Te estamos invitando al cumpleaños del tío Fernando, ¡y tenemos muchas ganas de que nos conozcas!',from:'Kerstin y Olle',alt:'Kerstin y Olle'},
+ esu:{kick:'Un mensaje desde Suecia',title:'¡Hola! Somos Kerstin y Olle',p:'Somos los hijos de Måns y Lovisa. Le estamos invitando al cumpleaños del tío Fernando, ¡y tenemos muchas ganas de que nos conozca!',from:'Kerstin y Olle',alt:'Kerstin y Olle'},
+ pl:{kick:'Un mensaje desde Suecia',title:'¡Hola! Somos Kerstin y Olle',p:'Somos los hijos de Måns y Lovisa. Les estamos invitando al cumpleaños del tío Fernando, ¡y tenemos muchas ganas de que nos conozcan!',from:'Kerstin y Olle',alt:'Kerstin y Olle'},
+ en:{kick:'A message from Sweden',title:'Hi! We’re Kerstin and Olle',p:'We’re Måns and Lovisa’s kids. We’re inviting you to Uncle Fernando’s birthday, and we can’t wait for you to meet us!',from:'Kerstin & Olle',alt:'Kerstin and Olle'}
+};
+KIDS.esa=KIDS.es;
+function kidsIntro(d,pl){const k=d.l==='en'?KIDS.en:pl?KIDS.pl:(KIDS[d.l]||KIDS.es);
+  return h('section',{class:'kids'},h('div',{class:'kicker'},k.kick),h('h2',null,k.title),
+    h('div',{class:'kids-photos'},h('figure',null,h('img',{src:'k1.jpg',alt:k.alt,decoding:'async'})),h('figure',null,h('img',{src:'k2.jpg',alt:k.alt,decoding:'async'}))),
+    h('p',null,k.p),h('div',{class:'from'},k.from));}
 function polaroid(src,cap,solo){return h('figure',{class:'polaroid'+(solo?' solo':'')},h('img',{src,alt:cap||'Foto de Nando',loading:'lazy',decoding:'async'}),cap?h('figcaption',null,cap):null);}
 function confetti(){const box=h('div',{class:'confetti','aria-hidden':'true'});const cols=['var(--sun)','var(--rhine)','var(--gift)'];let seed=7;const r=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
   for(let i=0;i<26;i++){const w=4+r()*8;box.append(h('i',{style:`left:${(r()*100).toFixed(1)}%;top:${(r()*100).toFixed(1)}%;width:${w.toFixed(0)}px;height:${(w*(r()>.5?1:2.2)).toFixed(0)}px;background:${cols[i%3]};transform:rotate(${(r()*180).toFixed(0)}deg)`}));}return box;}
@@ -443,7 +465,7 @@ function showInvite(d){
     while(pick.length<3&&tmp.length)pick.push(tmp.splice(Math.floor(Math.random()*tmp.length),1)[0]);
     lastHero=pick.map(p=>p.src);collage.classList.remove('fade');void collage.offsetWidth;collage.replaceChildren(...pick.map(p=>polaroid(p.src,p.cap)));collage.classList.add('fade');}
   shuffleHero();
-  const inv=$('#invite'); inv.replaceChildren(...[hero,collage,bar,...tabs.map(([k])=>panels[k])].filter(Boolean));
+  const inv=$('#invite'); inv.replaceChildren(...[hero,d.ki?kidsIntro(d,pl):null,collage,bar,...tabs.map(([k])=>panels[k])].filter(Boolean));
   for(const [k] of tabs)panels[k].hidden=true; panels.home.hidden=false; bar.querySelector('[data-k="home"]').setAttribute('aria-selected','true');
   $('#splash').hidden=true; $('#admin').hidden=true; inv.hidden=false; window.scrollTo(0,0);
   document.documentElement.lang=d.l==='en'?'en':'es';
@@ -508,7 +530,7 @@ const chains={};
 function queue(id,fn){chains[id]=(chains[id]||Promise.resolve()).then(fn).catch(e=>toast('No se pudo guardar: '+((e&&(e.message||e.code))||'error')));}
 function gref(id){return db.collection('guests').doc(id);}
 function save(g,patch){Object.assign(g,patch);queue(g.id,()=>gref(g.id).update(patch));}
-function payload(g){return {p:Number(g.people)||1,n:String(g.name||'').replace(/ (y|and) /g,' & '),l:g.lang||'es',f:g.florida?1:0,e:g.europa?1:0,xf:g.florida?(g.xf||[]):[],xe:g.europa?(g.xe||[]):[],m:g.msg||undefined,k:g.id};}
+function payload(g){return {p:Number(g.people)||1,n:String(g.name||'').replace(/ (y|and) /g,' & '),l:g.lang||'es',f:g.florida?1:0,e:g.europa?1:0,xf:g.florida?(g.xf||[]):[],xe:g.europa?(g.xe||[]):[],m:g.msg||undefined,k:g.id,ki:g.kids?1:undefined};}
 function linkFor(g){return (settings.inviteUrl||'').replace(/#.*$/,'')+'#'+enc(payload(g));}
 function waShare(g){const first=(g.name||'').split(/[ ,]/)[0];const l=linkFor(g);const txt={en:`Hi ${first}! I'm turning 40 and I want to celebrate with you. Here's your invitation: ${l}`,esu:`¡Hola ${first}! Cumplo 40 y quiero celebrarlo con usted. Aquí está su invitación: ${l}`,esa:`¡Hola ${first}! Cumplo 40 y quiero celebrarlo con vos. Acá está tu invitación: ${l}`}[g.lang]||`¡Hola ${first}! Cumplo 40 y quiero celebrarlo contigo. Aquí está tu invitación: ${l}`;return 'https://wa.me/?text='+encodeURIComponent(txt);}
 
@@ -592,6 +614,7 @@ function row(g){
       h('div',{class:'more-grid'},
         h('label',null,h('div',{class:'lbl'},'Mensaje personal (lo ve el invitado)'),h('textarea',{id:id+'_msg',onchange:e=>save(g,{msg:e.target.value.trim()})},g.msg||'')),
         h('label',null,h('div',{class:'lbl'},'Nota interna (solo tú)'),h('textarea',{id:id+'_int',onchange:e=>save(g,{internal:e.target.value.trim()})},g.internal||'')),
+        h('label',{class:'checks',style:'grid-column:1/-1'},h('input',{type:'checkbox',checked:!!g.kids,onchange:e=>{save(g,{kids:e.target.checked});render();}}),' Intro de Kerstin y Olle (hijos de Måns) al inicio de su invitación'),
         h('label',{style:'grid-column:1/-1'},h('div',{class:'lbl'},'Enlace de su invitación'),linkInput),
         h('div',null,delBtn))));
 }
@@ -608,7 +631,7 @@ async function loadResp(){
     const mcp=window.claude?await window.claude.use('mcp'):null;
     if(!mcp){respErr='No pude conectar con Make desde esta vista.';}
     else{
-      const r=await mcp.callTool('Make','data-store-records_list',{dataStoreId:RESP_STORE,limit:1000},{cache:false});
+      const r=await mcp.callTool('Make','data-store-records_list',{dataStoreId:RESP_STORE,limit:100},{cache:false});
       let p=r.payload;if(typeof p==='string'){try{p=JSON.parse(p);}catch(e){}}
       const arr=Array.isArray(p)?p:(p&&(p.records||p.data||p.items))||[];
       const m={};for(const x of arr){if(x&&x.key&&x.data&&x.key!=='prueba')m[x.key]=Object.assign({key:x.key},x.data);}
@@ -619,7 +642,7 @@ async function loadResp(){
     respErr=c==='server_not_connected'?'Conecta Make en claude.ai → Ajustes → Conectores para ver las respuestas.'
       :c==='needs_reauth'?'Vuelve a conectar Make en claude.ai → Ajustes → Conectores.'
       :(c==='not_in_manifest'||c==='approval_required')?'Falta tu permiso para leer las respuestas desde Make. Toca “Actualizar” y acepta.'
-      :'No pude leer las respuestas ahora. Toca “Actualizar” en un momento.';
+      :'No pude leer las respuestas ahora. Toca “Actualizar” en un momento.'+(c?' ('+c+(e.message?': '+String(e.message).slice(0,160):'')+')':'');
   }
   respBusy=false;render();
 }
